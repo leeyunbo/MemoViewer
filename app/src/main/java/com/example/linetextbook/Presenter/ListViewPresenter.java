@@ -15,10 +15,9 @@ public class ListViewPresenter implements ListViewContract.presenter {
     }
 
     @Override
-    public boolean requestCreateMemo(String title, String content, Bitmap image) {
+    public boolean requestAddMemo(String title, String content, LinkedList<Bitmap> image) {
         return false;
     }
-
     @Override
     public LinkedList<MemoDO> requestMemoList() {
         return null;

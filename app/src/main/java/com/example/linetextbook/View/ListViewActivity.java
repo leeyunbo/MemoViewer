@@ -16,12 +16,12 @@ public class ListViewActivity extends AppCompatActivity implements ListViewContr
     private ListViewPresenter presenter;
 
     @Override
-    public void createMemo() {
+    public void addMemo() {
 
     }
 
     @Override
-    public void getMemoList() {
+    public void showMemoList() {
 
     }
 

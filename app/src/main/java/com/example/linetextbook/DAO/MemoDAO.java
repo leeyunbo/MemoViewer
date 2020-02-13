@@ -10,13 +10,13 @@ public class MemoDAO {
     public LinkedList<MemoDO> getMemoList() {
         return null;
     }
-    public boolean deleteMemo(int id) {
+    public boolean doDeleteMemo(int id) {
         return false;
     }
-    public boolean editMemo(int id){
+    public boolean doEditMemo(int id){
         return false;
     }
-    public boolean createMemo(String title, String content, Bitmap iamge) {
+    public boolean doAddMemo(String title, String content, Bitmap iamge) {
         return false;
     }
 }
