@@ -17,10 +17,7 @@ public class DetailViewPresenter implements DetailViewContract.presenter {
         return false;
     }
 
-    @Override
-    public boolean requestEditMemo(int id) {
-        return false;
-    }
+
 
     public DetailViewPresenter(DetailViewActivity view) {
         this.view = view;

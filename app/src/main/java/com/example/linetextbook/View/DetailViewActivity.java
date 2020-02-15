@@ -16,10 +16,6 @@ public class DetailViewActivity extends AppCompatActivity implements DetailViewC
 
     }
 
-    @Override
-    public void editMemo(View view) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
