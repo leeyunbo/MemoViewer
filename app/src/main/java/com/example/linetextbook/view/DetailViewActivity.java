@@ -10,19 +10,20 @@ import android.widget.TextView;
 import com.example.linetextbook.contract.DetailContract;
 import com.example.linetextbook.Presenter.DetailPresenter;
 import com.example.linetextbook.R;
+import com.example.linetextbook.database.MemoEntity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailViewActivity extends AppCompatActivity implements DetailContract.view {
     private DetailPresenter presenter;
-    @BindView(R.id.contentView) private TextView contentView;
-    @BindView(R.id.titleView) private TextView titleView;
-    @BindView(R.id.imageView) private ImageView imageView;
+    @BindView(R.id.contentView)  TextView contentView;
+    @BindView(R.id.titleView)  TextView titleView;
+    //@BindView(R.id.imageView) private ImageView imageView;
 
     @Override
-    public void deleteMemo(View view) {
-        presenter.requestDeleteMemo(view.getId());
+    public void deleteMemo(MemoEntity memo) {
+        presenter.requestDeleteMemo(memo);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.example.linetextbook.contract;
 
-import com.example.linetextbook.entity.MemoEntity;
+import com.example.linetextbook.database.MemoEntity;
 
 public interface EditContract {
     interface view {
