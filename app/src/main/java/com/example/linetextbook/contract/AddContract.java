@@ -16,6 +16,6 @@ public interface AddContract {
 
     interface presenter {
         void requestAddMemo(MemoEntity memo); //메모 추가 요청 메서드, Model에게 요청한다.
-        void addCallBack(); //Model이 데이터 추가를 완료하면 해당 callback 메서드를 호출한다.
+        void notifyAddSucceed(); //Model이 데이터 추가를 완료하면 해당 callback 메서드를 호출한다.
     }
 }

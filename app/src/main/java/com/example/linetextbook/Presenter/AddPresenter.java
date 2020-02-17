@@ -27,7 +27,7 @@ public class AddPresenter implements AddContract.presenter {
     }
 
     @Override
-    public void addCallBack() {
+    public void notifyAddSucceed() {
         view.backListView();
     }
 }

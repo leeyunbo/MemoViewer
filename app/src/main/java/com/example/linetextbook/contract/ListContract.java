@@ -13,6 +13,6 @@ public interface ListContract {
 
     interface presenter {
         void requestMemoList(); //메모리스트 가져오기 요청 메서드, Model에게 요청한다.
-        void ListCallBack(List<MemoEntity> memoData);
+        void notifyItemReceived(List<MemoEntity> memoData);
     }
 }

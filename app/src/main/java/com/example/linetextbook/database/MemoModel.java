@@ -51,7 +51,7 @@ public class MemoModel{
                 for(MemoEntity data : memoData) {
                     data.setImageList(ArrayConverters.convertStringToArray(data.getImageUrl()));
                 }
-                listPresenter.ListCallBack(memoData);
+                listPresenter.notifyItemReceived(memoData);
             }
         };
         Thread thread = new Thread(r);
@@ -65,6 +65,7 @@ public class MemoModel{
                 String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
                 memo.setImageUrl(stringImageUrl);
                 memoDAO.doEditMemo(memo);
+                editPresenter.notifyItemEdit();
             }
         };
         Thread thread = new Thread(r);
@@ -81,7 +82,7 @@ public class MemoModel{
                     memo.setImageUrl(stringImageUrl);
                 }
                 memoDAO.doAddMemo(memo);
-                addPresenter.addCallBack();
+                addPresenter.notifyAddSucceed();
             }
         };
         Thread thread = new Thread(r);
@@ -92,8 +93,11 @@ public class MemoModel{
     public boolean doDeleteMemo(MemoEntity memo) {
         Runnable r = new Runnable() {
             @Override
-            public void run() {
-                memoDAO.doDeleteMemo(memo);
+            public void run()
+            {
+                int a = memoDAO.doDeleteMemo(memo);
+                System.out.println(a);
+                detailPresenter.notifyItemDelete();
             }
         };
         Thread thread = new Thread(r);

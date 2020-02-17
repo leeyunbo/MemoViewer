@@ -1,6 +1,7 @@
 package com.example.linetextbook.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
+import com.example.linetextbook.view.DetailViewActivity;
 import com.example.linetextbook.view.ListViewActivity;
 
 import java.util.List;
@@ -33,6 +35,14 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
             list_title = view.findViewById(R.id.list_title);
             list_content = view.findViewById(R.id.list_content);
             list_image = view.findViewById(R.id.list_image);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(v.getContext(), DetailViewActivity.class);
+                    intent.putExtra("MEMO",memoData.get(getAdapterPosition()));
+                    v.getContext().startActivity(intent);
+                }
+            });
         }
     }
 
@@ -55,12 +65,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         String title = memoData.get(position).getTitle();
         String content = memoData.get(position).getContent();
         String[] imageList = memoData.get(position).getImageList();
-        if(imageList.length == 0) {
-            holder.list_image.setImageResource(R.drawable.ic_no_image);
-        }
-        else {
-            holder.list_image.setImageURI(Uri.parse(imageList[0]));
-        }
+        holder.list_image.setImageURI(Uri.parse(imageList[0]));
         holder.list_title.setText(title);
         holder.list_content.setText(content);
     }

@@ -6,9 +6,11 @@ public interface EditContract {
     interface view {
         void editMemo();
         void getEditMemoInform();
+        void backListView();
     }
     interface presenter {
-        boolean requestEditMemo();
+        void requestEditMemo(MemoEntity memo);
+        void notifyItemEdit();
         MemoEntity requestEditMemoInform();
     }
 }

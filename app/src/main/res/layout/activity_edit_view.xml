@@ -7,55 +7,41 @@
     tools:context=".view.EditViewActivity">
 
     <EditText
-        android:id="@+id/titleEditText"
-        android:layout_width="350dp"
+        android:id="@+id/edit_title_view"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginBottom="10dp"
-        android:hint="제목"
-        app:layout_constraintBottom_toTopOf="@+id/contentEditText"
+        android:gravity="top"
+        android:text="제목"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/edit_content_view"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/contentEditText"
-        android:layout_width="350dp"
-        android:layout_height="500dp"
-        android:layout_marginEnd="40dp"
+        android:id="@+id/edit_content_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="80dp"
-        android:hint="내용을 입력해주세요."
+        app:layout_constraintEnd_toEndOf="@+id/edit_title_view"
+        app:layout_constraintStart_toStartOf="@+id/edit_title_view"
+        app:layout_constraintTop_toBottomOf="@+id/edit_title_view"
+        app:layout_constraintBottom_toBottomOf="parent">
+    </EditText>
+
+    <ListView
+        android:id="@+id/imageListView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/titleEditText"
-        app:layout_constraintTop_toBottomOf="@+id/titleEditText" />
-
-    <Button
-        android:id="@+id/createButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:text="create"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/contentEditText" />
-
-    <Button
-        android:id="@+id/imageAddButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="image"
-        app:layout_constraintBottom_toBottomOf="@id/createButton"
-        app:layout_constraintStart_toEndOf="@+id/createButton" />
-
-    <Button
-        android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:text="refresh"
-        app:layout_constraintBottom_toBottomOf="@id/imageAddButton"
-        app:layout_constraintStart_toEndOf="@+id/imageAddButton" />
-
+        app:layout_constraintTop_toBottomOf="@+id/edit_content_view">
+    </ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

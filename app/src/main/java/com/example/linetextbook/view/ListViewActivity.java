@@ -1,6 +1,7 @@
 package com.example.linetextbook.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,9 +55,10 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
             memoCount.setText("현재 " + 0 + "개의 메모");
             return;
         }
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         MemoAdapter adapter = new MemoAdapter(memoData);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
         memoCount.setText("현재 " + memoData.size() + "개의 메모");
     }
 
@@ -71,4 +73,5 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
         Intent intent = new Intent(this, addViewActivity.class);
         startActivity(intent);
     }
+
 }

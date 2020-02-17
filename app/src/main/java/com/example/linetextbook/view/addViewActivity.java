@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -26,9 +28,6 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
     private List<String> imageList = new ArrayList<>();
     @BindView(R.id.contentEditText)  EditText contentEditText;
     @BindView(R.id.titleEditText)  EditText titleEditText;
-    @BindView(R.id.createButton)  Button createButton;
-    @BindView(R.id.imageAddButton)  Button imageAddButton;
-    @BindView(R.id.refreshButton)  Button refreshButton;
 
     @Override
     public void backListView() {
@@ -37,7 +36,6 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
     }
 
     @Override
-    @OnClick(R.id.createButton)
     public void addMemo() {
         SimpleDateFormat format2 = new SimpleDateFormat( "yyyy년 MM월dd일 HH시mm분ss초");
         Date date = new Date();
@@ -51,7 +49,6 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
     }
 
     @Override
-    @OnClick(R.id.imageAddButton)
     public void addImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -75,5 +72,27 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
         setContentView(R.layout.activity_create_view);
         ButterKnife.bind(this);
         this.presenter = new AddPresenter(this);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_view_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_add_btn:
+                addMemo();
+                return true;
+            case R.id.menu_image_add_btn:
+                addImage();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

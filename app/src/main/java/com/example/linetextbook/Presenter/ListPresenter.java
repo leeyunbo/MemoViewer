@@ -21,7 +21,7 @@ public class ListPresenter implements ListContract.presenter {
     }
 
     @Override
-    public void ListCallBack(List<MemoEntity> memoData) {
+    public void notifyItemReceived(List<MemoEntity> memoData) {
         view.changeRecyclerView(memoData);
     }
 
