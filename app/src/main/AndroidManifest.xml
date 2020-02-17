@@ -9,10 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".View.EditViewActivity"></activity>
-        <activity android:name=".View.CreateViewActivity" />
-        <activity android:name=".View.DetailViewActivity" />
-        <activity android:name=".View.ListViewActivity">
+        <activity android:name=".view.EditViewActivity"></activity>
+        <activity android:name=".view.addViewActivity" />
+        <activity android:name=".view.DetailViewActivity" />
+        <activity android:name=".view.ListViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

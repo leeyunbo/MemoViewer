@@ -1,12 +1,10 @@
-package com.example.linetextbook.Contract;
+package com.example.linetextbook.contract;
 
 import android.graphics.Bitmap;
 
-import com.example.linetextbook.DO.MemoDO;
-
 import java.util.LinkedList;
 
-public interface CreateViewContract {
+public interface AddContract {
     interface view {
         void addMemo(); //메모 추가 메서드, prsenter에게 요청한다.
     }

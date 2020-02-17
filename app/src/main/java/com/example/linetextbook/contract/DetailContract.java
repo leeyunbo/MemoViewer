@@ -1,12 +1,8 @@
-package com.example.linetextbook.Contract;
+package com.example.linetextbook.contract;
 
 import android.view.View;
 
-import com.example.linetextbook.DO.MemoDO;
-
-import java.util.LinkedList;
-
-public interface DetailViewContract {
+public interface DetailContract {
     interface view {
         void deleteMemo(View view); //메모 삭제 메서드, presenter에게 요청
     }
