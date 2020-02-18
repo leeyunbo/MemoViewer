@@ -37,6 +37,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     @Override
     public void backListView() {
         Intent intent = new Intent(this,ListViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

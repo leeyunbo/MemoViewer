@@ -1,14 +1,20 @@
 package com.example.linetextbook.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.linetextbook.adapter.ImageAdapter;
+import com.example.linetextbook.adapter.MemoAdapter;
 import com.example.linetextbook.contract.AddContract;
 import com.example.linetextbook.Presenter.AddPresenter;
 import com.example.linetextbook.R;
@@ -21,17 +27,18 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class addViewActivity extends AppCompatActivity implements AddContract.view {
     private AddPresenter presenter; //presenter
     private List<String> imageList = new ArrayList<>();
-    @BindView(R.id.contentEditText)  EditText contentEditText;
-    @BindView(R.id.titleEditText)  EditText titleEditText;
+    @BindView(R.id.add_content_edit)  EditText contentEditText;
+    @BindView(R.id.add_title_edit)  EditText titleEditText;
+    @BindView(R.id.add_imageList) RecyclerView addRecyclerView;
 
     @Override
     public void backListView() {
         Intent intent = new Intent(this, ListViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
@@ -61,15 +68,21 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode == 1) {
+            if(data == null) return;
             String path = data.getData().toString();
             System.out.println(path);
             imageList.add(path);
+            ImageAdapter adapter = new ImageAdapter(imageList);
+            addRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            addRecyclerView.setAdapter(adapter);
+            addRecyclerView.setItemAnimator(new DefaultItemAnimator());
+            addRecyclerView.setNestedScrollingEnabled(false);
         }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_view);
+        setContentView(R.layout.activity_add_view);
         ButterKnife.bind(this);
         this.presenter = new AddPresenter(this);
     }
@@ -89,6 +102,7 @@ public class addViewActivity extends AppCompatActivity implements AddContract.vi
                 addMemo();
                 return true;
             case R.id.menu_image_add_btn:
+                getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 addImage();
                 return true;
             default:

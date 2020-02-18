@@ -3,18 +3,22 @@ package com.example.linetextbook.view;
 import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActionBar;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.linetextbook.contract.DetailContract;
 import com.example.linetextbook.Presenter.DetailPresenter;
 import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +29,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @BindView(R.id.contentView)  TextView contentView;
     @BindView(R.id.titleView)  TextView titleView;
     @BindView(R.id.detail_time_view) TextView detail_time_view;
+    @BindView(R.id.detail_image_container) LinearLayout detail_image_container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +50,25 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     public void showMemoDetail() {
         Intent intent = getIntent();
         memo = (MemoEntity) intent.getSerializableExtra("MEMO");
+        String[] imageList = memo.getImageList();
         titleView.setText(memo.getTitle());
         contentView.setText(memo.getContent());
         detail_time_view.setText(memo.getTime());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin)
+        );
+        for(String image : imageList) {
+            ImageView imageView = new ImageView(this);
+            imageView.setImageURI(Uri.parse(image));
+            imageView.setLayoutParams(layoutParams);
+            imageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            detail_image_container.addView(imageView);
+        }
     }
 
     @Override
@@ -59,6 +80,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @Override
     public void backListView() {
         Intent intent = new Intent(this, ListViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 

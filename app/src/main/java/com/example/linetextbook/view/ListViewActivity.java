@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -38,9 +39,9 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
         setContentView(R.layout.activity_list_view);
         presenter = new ListPresenter(this);
         ButterKnife.bind(this);
+        getSupportActionBar().hide();
         showMemoList();
     }
-
     /*사용자가 등록한 모든 메모를 리스트뷰에 출력*/
     @Override
     public void showMemoList() {
@@ -51,14 +52,15 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
     @Override
     public void changeRecyclerView(List<MemoEntity> memoData) {
         this.memoData = memoData;
-        if(memoData.size() == 0) {
+       /* if(memoData.size() == 0) {
             memoCount.setText("현재 " + 0 + "개의 메모");
             return;
-        }
+        }*/
         MemoAdapter adapter = new MemoAdapter(memoData);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setNestedScrollingEnabled(false);
         memoCount.setText("현재 " + memoData.size() + "개의 메모");
     }
 
@@ -72,6 +74,18 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
     public void addBtnClick() {
         Intent intent = new Intent(this, addViewActivity.class);
         startActivity(intent);
+    }
+
+    class AsyncRecyclerView extends AsyncTask<String,String,String> {
+        @Override
+        protected String doInBackground(String... strings) {
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
     }
 
 }
