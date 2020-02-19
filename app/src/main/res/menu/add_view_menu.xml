@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/menu_add_btn"
         android:title="메모 저장하기"
-        app:showAsAction="never" />
-    <item android:id="@+id/menu_image_add_btn"
-        android:title="이미지 추가하기"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_save_memo"
+        app:showAsAction="always" />
 </menu>

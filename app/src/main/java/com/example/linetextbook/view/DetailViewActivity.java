@@ -14,14 +14,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.linetextbook.contract.DetailContract;
 import com.example.linetextbook.Presenter.DetailPresenter;
 import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+/**
+ * 사용자가 터치한 메모의 상세한 정보를 UI를 통해 보여주는 액티비티
+ * 사용자는 메뉴를 통해 편집,삭제 기능을 이용할 수 있다.
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 
 public class DetailViewActivity extends AppCompatActivity implements DetailContract.view {
     private DetailPresenter presenter;
@@ -40,12 +48,20 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         showMemoDetail();
     }
 
+    /**
+     * 사용자가 메뉴의 삭제 버튼을 클릭한 경우 호출되는 콜백 메서드
+     * DetailPresenter에게 삭제 요청을 전송한다.
+     */
     @Override
     public void deleteMemo()
     {
         presenter.requestDeleteMemo(memo);
     }
 
+    /**
+     * 사용자가 클릭한 메모의 정보를 출력해주는 메서드
+     * Intent를 통해 직렬화되어 넘어온 객체를 역직렬화를 통해 객체 형태로 변환 후 View에 뿌려준다.
+     */
     @Override
     public void showMemoDetail() {
         Intent intent = getIntent();
@@ -63,7 +79,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         );
         for(String image : imageList) {
             ImageView imageView = new ImageView(this);
-            imageView.setImageURI(Uri.parse(image));
+            Glide.with(this).load(Uri.parse(image)).into(imageView);
             imageView.setLayoutParams(layoutParams);
             imageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -71,17 +87,21 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         }
     }
 
+    /**
+     * presenter에게 한 요청이 완료되면 presenter에 의해 호출되는 콜백 메서드
+     * ListViewActivity로 돌아간다.
+     */
+    @Override
+    public void backListView() {
+        Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.detail_view_menu, menu);
         return true;
-    }
-
-    @Override
-    public void backListView() {
-        Intent intent = new Intent(this, ListViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
     }
 
     @Override
@@ -95,7 +115,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
                 startActivity(intent);
                 return true;
             case R.id.menu_delete_btn:
-                presenter.requestDeleteMemo(memo);
+                deleteMemo();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

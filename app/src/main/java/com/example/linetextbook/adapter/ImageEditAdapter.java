@@ -1,35 +1,37 @@
 package com.example.linetextbook.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.linetextbook.R;
-import com.example.linetextbook.view.AddViewActivity;
+import com.example.linetextbook.view.EditViewActivity;
 
 import java.util.List;
 
+
 /**
- * AddViewActivity에서 사용하는 리사이클러 뷰에 대한 어뎁터 클래스
+ * EditViewActivity에서 사용하는 리사이클러 뷰에 대한 어뎁터 클래스
  *
  * @author 이윤복
  * @version 1.0
  */
 
-public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
+public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.ViewHolder> {
     List<String> imageList;
-    AddViewActivity context;
-    ImageView delete_image_btn;
+    EditViewActivity context;
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView add_imageView;
+        ImageView delete_image_btn;
         ViewHolder(View view) {
             super(view);
             add_imageView = view.findViewById(R.id.add_imageView);
@@ -44,7 +46,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     imageList.remove(getAdapterPosition());
-                    notifyItemChanged(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                     notifyItemRangeChanged(getAdapterPosition(), imageList.size());
                     context.notifyDeleteImage(imageList);
                 }
@@ -52,29 +54,28 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
         }
     }
 
-    public ImageAdapter(List<String> imageList, AddViewActivity context) {
+    public ImageEditAdapter(List<String> imageList, EditViewActivity context) {
         this.imageList = imageList;
         this.context = context;
     }
 
     @NonNull
     @Override
-    public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ImageEditAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.list_image_layout, parent, false);
-        ImageAdapter.ViewHolder vh = new ImageAdapter.ViewHolder(view);
+        ImageEditAdapter.ViewHolder vh = new ImageEditAdapter.ViewHolder(view);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ImageEditAdapter.ViewHolder holder, int position) {
         if(imageList.get(position).contains("http://") || imageList.get(position).contains("https://")) {
             Glide.with(context).load(imageList.get(position)).error(R.drawable.ic_broken_image).into(holder.add_imageView);
-
         }
-        else{
-            Glide.with(context).load(Uri.parse(imageList.get(position))).error(R.drawable.ic_broken_image).into(holder.add_imageView);
+        else {
+            Glide.with(context).load(imageList.get(position)).error(R.drawable.ic_broken_image).into(holder.add_imageView);
         }
     }
 

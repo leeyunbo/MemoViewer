@@ -9,26 +9,32 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.linetextbook.CameraFunction;
 import com.example.linetextbook.adapter.ImageAdapter;
-import com.example.linetextbook.adapter.ImageEditAdapter;
-import com.example.linetextbook.contract.EditContract;
-import com.example.linetextbook.Presenter.EditPresenter;
+import com.example.linetextbook.contract.AddContract;
+import com.example.linetextbook.Presenter.AddPresenter;
 import com.example.linetextbook.R;
-import com.example.linetextbook.converters.ArrayConverters;
 import com.example.linetextbook.database.MemoEntity;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,56 +42,64 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
- * 메모를 수정할 수 있도록 UI를 제공하는 액티비티
- * 사용자는 제목, 내용, 이미지를 변경할 수 있다.
+ * 사용자가 추가할 메모를 작성할 수 있도록 UI를 제공하는 액티비티
+ * 사용자가 입력을 다한 후, 추가 버튼에 대한 이벤트가 발생했을 경우, addPresenter에게 DB 추가 요청을 한다.
  *
  * @author 이윤복
  * @version 1.0
  */
 
-public class EditViewActivity extends AppCompatActivity implements EditContract.view
-{
-    private MemoEntity memo;
-    private List<String> imageList;
-    private EditPresenter presenter;
+public class AddViewActivity extends AppCompatActivity implements AddContract.view {
+    private AddPresenter presenter; //presenter
+    private List<String> imageList = new ArrayList<>();
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
-    @BindView(R.id.edit_title_edit) EditText edit_title;
-    @BindView(R.id.edit_content_edit) EditText edit_content;
-    @BindView(R.id.edit_imageList) RecyclerView editRecyclerView;
-    @BindView(R.id.edit_album_image_btn) ImageView edit_album_image_btn;
-    @BindView(R.id.edit_camera_image_btn) ImageView edit_camera_image_btn;
-    @BindView(R.id.edit_url_image_btn) ImageView edit_url_image_btn;
-
+    @BindView(R.id.add_content_edit)  EditText contentEditText;
+    @BindView(R.id.add_title_edit)  EditText titleEditText;
+    @BindView(R.id.add_imageList) RecyclerView addRecyclerView;
+    @BindView(R.id.add_album_image_btn) ImageView add_album_image_btn;
+    @BindView(R.id.add_camera_image_btn) ImageView add_camera_image_btn;
+    @BindView(R.id.add_url_image_btn) ImageView add_url_image_btn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_view);
-        this.presenter = new EditPresenter(this);
+        setContentView(R.layout.activity_add_view);
         ButterKnife.bind(this);
-        getEditMemoInform();
+        this.presenter = new AddPresenter(this);
     }
 
     /**
-     * 사용자가 수정할 메모의 정보를 출력해주는 메서드
-     * Intent를 통해 직렬화되어 넘어온 객체를 역직렬화를 통해 객체 형태로 변환 후 View에 뿌려준다.
+     * presenter에게 메모 추가를 요청하는 메서드
      */
     @Override
-    public void getEditMemoInform() {
-        Intent intent = getIntent();
-        memo = (MemoEntity) intent.getSerializableExtra("MEMO");
-        edit_title.setText(memo.getTitle());
-        edit_content.setText(memo.getContent());
-        this.imageList = ArrayConverters.convertArrayToList(memo.getImageList());
-        ImageEditAdapter adapter = new ImageEditAdapter(imageList,this);
-        editRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        editRecyclerView.setAdapter(adapter);
-        editRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        editRecyclerView.setNestedScrollingEnabled(false);
+    public void addMemo() {
+        SimpleDateFormat format2 = new SimpleDateFormat( "yyyy년 MM월dd일 HH시mm분ss초");
+        Date date = new Date();
+        String title = titleEditText.getText().toString();
+        String content = contentEditText.getText().toString();
+        String time = format2.format(date);
+        MemoEntity memo;
+        if(imageList == null) memo = new MemoEntity(title,content,time,null);
+        else memo = new MemoEntity(title,content,time,imageList.toArray(new String[0]));
+        presenter.requestAddMemo(memo);
     }
 
-    @OnClick(R.id.edit_album_image_btn)
+    /**
+     * addPresenter에게 한 요청이 완료되었을 때, addPresenter에게 호출되어지는 콜백메서드
+     */
+    @Override
+    public void backListView() {
+        Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    /**
+     * 사용자가 add_album_image_btn을 클릭한 경우 호출되는 이벤트 콜백메서드
+     * 앨범에서 이미지를 받아온다.
+     */
+    @OnClick(R.id.add_album_image_btn)
     @Override
     public void addAlbumImage() {
         Intent intent = new Intent();
@@ -94,7 +108,11 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         startActivityForResult(intent,REQUEST_IMAGE_ALBUM);
     }
 
-    @OnClick(R.id.edit_camera_image_btn)
+    /**
+     * 사용자가 add_camera_image_btn을 클릭한 경우 호출되는 이벤트 콜백메서드
+     * 카메라 촬영을 통해 이미지를 받아온다.
+     */
+    @OnClick(R.id.add_camera_image_btn)
     @Override
     public void addCameraImage() {
         CameraFunction cameraFunction = new CameraFunction(this);
@@ -113,7 +131,11 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         }
     }
 
-    @OnClick(R.id.edit_url_image_btn)
+    /**
+     * 사용자가 add_url_image_btn을 클릭한 경우 호출되는 이벤트 콜백메서드
+     * 사용자가 입력한 URL을 통해 이미지를 받아온다.
+     */
+    @OnClick(R.id.add_url_image_btn)
     @Override
     public void addUrlImage() {
         AlertDialog.Builder ad = new AlertDialog.Builder(this);
@@ -122,11 +144,12 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
 
         final EditText et = new EditText(this);
         ad.setView(et);
+
         ad.setPositiveButton("입력", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String Url = et.getText().toString();
-                if(!Url.contains("http://") || !Url.contains("https://")) {
+                if(!Url.contains("http://") && !Url.contains("https://")) {
                     Toast.makeText(getApplicationContext(), "올바르지 않은 URL 입니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -136,6 +159,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
 
         ad.show();
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -154,31 +178,31 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
      */
     @Override
     public void changeImageRecyclerView(String path) {
+        System.out.println(Glide.with(this).load(path));
         imageList.add(path);
-        ImageEditAdapter adapter = new ImageEditAdapter(imageList,this);
-        editRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        editRecyclerView.setAdapter(adapter);
-        editRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        editRecyclerView.setNestedScrollingEnabled(false);
+        ImageAdapter adapter = new ImageAdapter(imageList,this);
+        addRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        addRecyclerView.setAdapter(adapter);
+        addRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        addRecyclerView.setNestedScrollingEnabled(false);
     }
 
-    /**
-     * EditPresenter에게 한 요청이 완료되었을 때, EditPresenter에게 호출되어지는 콜백메서드
-     */
     @Override
-    public void backListView() {
-        Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_view_menu, menu);
+        return true;
     }
 
-    /**
-     * 사용자가 앱 바의 저장 버튼을 클릭했을 경우 호출되는 콜백메서드
-     * editPresenter에게 메모 수정 요청을 전송한다.
-     */
     @Override
-    public void editMemo() {
-        presenter.requestEditMemo(memo);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        switch (item.getItemId()) {
+            case R.id.menu_add_btn:
+                addMemo();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
@@ -189,27 +213,5 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     @Override
     public void notifyDeleteImage(List<String> imageList) {
         this.imageList = imageList;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.edit_view_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.edit_finish_btn:
-                memo.setTitle(edit_title.getText().toString());
-                memo.setContent(edit_content.getText().toString());
-                memo.setImageList(imageList.toArray(new String[0]));
-                editMemo();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 }

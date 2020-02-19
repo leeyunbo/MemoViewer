@@ -14,6 +14,13 @@ import com.example.linetextbook.database.MemoEntity;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model에서 사용할 DB 관련 추상 메서드를 가지고 있는 DAO 클래스
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
+
 @Dao
 public interface MemoDAO {
     @Query("SELECT * FROM memo")

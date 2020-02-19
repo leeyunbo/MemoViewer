@@ -13,6 +13,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * 메모의 정보를 담을 수 있는 DO 클래스
+ * ButterKnife 라이브러리 사용 https://github.com/JakeWharton/butterknife
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 @Entity(tableName = "memo")
 public class MemoEntity implements Serializable {
     @PrimaryKey(autoGenerate = true)

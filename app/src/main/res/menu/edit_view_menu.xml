@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item android:id="@+id/edit_finish_btn"
         android:title="수정 완료하기"
-        app:showAsAction="never" />
-    <item android:id="@+id/edit_cancel_btn"
-        android:title="수정 취소하기"
-        app:showAsAction="never" />
+        app:showAsAction="always"
+        android:icon="@drawable/ic_save_memo"/>
 </menu>

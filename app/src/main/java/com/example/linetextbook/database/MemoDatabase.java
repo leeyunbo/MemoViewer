@@ -10,6 +10,12 @@ import androidx.room.TypeConverter;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+/**
+ * DB의 인스턴스를 반환해주는 클래스
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 @Database(entities = {MemoEntity.class}, version = 1)
 public abstract class MemoDatabase extends RoomDatabase {
     public abstract MemoDAO memoDAO();

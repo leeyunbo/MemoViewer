@@ -2,22 +2,18 @@ package com.example.linetextbook.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.linetextbook.adapter.MemoAdapter;
 import com.example.linetextbook.contract.ListContract;
 import com.example.linetextbook.Presenter.ListPresenter;
 import com.example.linetextbook.R;
-import com.example.linetextbook.database.MemoDAO;
 import com.example.linetextbook.database.MemoEntity;
 
 import java.util.List;
@@ -26,12 +22,19 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * 사용자가 작성한 모든 메모를 UI를 통해 보여주는 액티비티
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
+
 public class ListViewActivity extends AppCompatActivity implements ListContract.view {
     private ListPresenter presenter;
     private List<MemoEntity> memoData;
     @BindView(R.id.memoCount) TextView memoCount;
     @BindView(R.id.addButton) ImageView addButton;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.recyclerView) RecyclerView memoRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,50 +45,40 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
         getSupportActionBar().hide();
         showMemoList();
     }
-    /*사용자가 등록한 모든 메모를 리스트뷰에 출력*/
+
+    /**
+     * 사용자가 추가한 모든 메모의 정보를 DB에서 가져올 수 있도록 ListPresenter에게 요청을 전송한다.
+     */
     @Override
     public void showMemoList() {
         presenter.requestMemoList();
     }
 
-    /*데이터를 다 받아왔으면 RecyclerView에 뿌려줌 */
+    /**
+     * ListPresenter에게 한 요청이 완료되었을 때, ListPresenter에게 호출되어지는 콜백메서드
+     * RecyclerView에 모든 메모를 뿌려준다.
+     *
+     * @param memoData 사용자가 추가한 모든 메모의 DO 객체를 담고있는 List
+     */
     @Override
     public void changeRecyclerView(List<MemoEntity> memoData) {
         this.memoData = memoData;
-       /* if(memoData.size() == 0) {
-            memoCount.setText("현재 " + 0 + "개의 메모");
-            return;
-        }*/
-        MemoAdapter adapter = new MemoAdapter(memoData);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setNestedScrollingEnabled(false);
+        MemoAdapter adapter = new MemoAdapter(memoData,this);
+        memoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        memoRecyclerView.setAdapter(adapter);
+        memoRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        memoRecyclerView.setNestedScrollingEnabled(false);
         memoCount.setText("현재 " + memoData.size() + "개의 메모");
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    /*사용자가 addButton 클릭 이벤트 발생시, 메모 생성 액티비티로 이동*/
+    /**
+     * 사용자가 addButton을 클릭했을 때, 발생하는 이벤트 콜백 메서드
+     * addViewActivity로 이동한다.
+     */
     @OnClick(R.id.addButton)
     public void addBtnClick() {
-        Intent intent = new Intent(this, addViewActivity.class);
+        Intent intent = new Intent(this, AddViewActivity.class);
         startActivity(intent);
-    }
-
-    class AsyncRecyclerView extends AsyncTask<String,String,String> {
-        @Override
-        protected String doInBackground(String... strings) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
     }
 
 }

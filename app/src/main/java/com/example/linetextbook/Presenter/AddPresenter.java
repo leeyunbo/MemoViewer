@@ -1,31 +1,36 @@
 package com.example.linetextbook.Presenter;
 
-import android.graphics.Bitmap;
-
 import com.example.linetextbook.contract.AddContract;
-import com.example.linetextbook.database.MemoDAO;
 import com.example.linetextbook.database.MemoEntity;
 import com.example.linetextbook.database.MemoModel;
-import com.example.linetextbook.view.addViewActivity;
+import com.example.linetextbook.view.AddViewActivity;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
+/**
+ * AddViewActivity(View)와 MemoModel(Model) 사이의 요청을 처리해주는 Presenter
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 public class AddPresenter implements AddContract.presenter {
-    addViewActivity view;
+    AddViewActivity view;
     MemoModel model;
 
-    public AddPresenter(addViewActivity view) {
+    public AddPresenter(AddViewActivity view) {
         this.view = view;
         this.model = new MemoModel(view.getApplicationContext(),this);
     }
 
+    /**
+     * View에게 요청이 도착하면 Model에게 메모의 추가를 요청하는 메서드
+     */
     @Override
     public void requestAddMemo(MemoEntity memo) {
         model.doAddMemo(memo);
     }
 
+    /**
+     * Model에게 한 요청이 종료된 후, Model이 호출하는 콜백 메서드
+     */
     @Override
     public void notifyAddSucceed() {
         view.backListView();
