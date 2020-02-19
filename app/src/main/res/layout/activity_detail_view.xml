@@ -23,13 +23,13 @@
             android:layout_marginBottom="20dp"
             android:text="수원시 여러분 담배꽁초"
             android:textSize="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/titleView"
+            app:layout_constraintBottom_toTopOf="@+id/detail_title_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/titleView"
+            android:id="@+id/detail_title_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -38,13 +38,13 @@
             android:text="제목"
             android:textSize="20dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/contentView"
+            app:layout_constraintBottom_toTopOf="@+id/detail_content_view"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/detail_time_view" />
 
         <TextView
-            android:id="@+id/contentView"
+            android:id="@+id/detail_content_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -54,9 +54,9 @@
             android:text="내용을 입력해주세요."
             android:textSize="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/titleView"
+            app:layout_constraintEnd_toEndOf="@+id/detail_title_view"
             app:layout_constraintStart_toStartOf="@+id/detail_time_view"
-            app:layout_constraintTop_toBottomOf="@+id/titleView" />
+            app:layout_constraintTop_toBottomOf="@+id/detail_title_view" />
 
 
         <LinearLayout
@@ -67,7 +67,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/contentView">
+            app:layout_constraintTop_toBottomOf="@+id/detail_content_view">
         </LinearLayout>
     </LinearLayout>
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * 스마트폰의 내부 저장소에 접근하여 요청을 처리하는 메서드들이 정의되어있는 Model
+ * Room 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0

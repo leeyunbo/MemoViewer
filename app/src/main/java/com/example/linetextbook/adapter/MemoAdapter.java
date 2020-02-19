@@ -26,6 +26,8 @@ import java.util.List;
 
 /**
  * ListViewActivity에서 사용하는 리사이클러 뷰에 대한 어뎁터 클래스
+ * Glide 라이브러리 사용 https://github.com/bumptech/glide
+ * RecyclerView 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0
@@ -83,7 +85,6 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         String content = memoData.get(position).getContent();
         String[] imageList = memoData.get(position).getImageList();
         Glide.with(context).load(Uri.parse(imageList[0])).into(holder.list_image);
-        //holder.list_image.setImageURI(Uri.parse(imageList[0]));
         holder.list_title.setText(title);
         holder.list_content.setText(content);
     }

@@ -19,6 +19,8 @@ import java.util.List;
 
 /**
  * AddViewActivity에서 사용하는 리사이클러 뷰에 대한 어뎁터 클래스
+ * Glide 라이브러리 사용 https://github.com/bumptech/glide
+ * RecyclerView 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0
@@ -44,7 +46,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     imageList.remove(getAdapterPosition());
-                    notifyItemChanged(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                     notifyItemRangeChanged(getAdapterPosition(), imageList.size());
                     context.notifyDeleteImage(imageList);
                 }

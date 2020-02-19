@@ -2,13 +2,18 @@ package com.example.linetextbook.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +37,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,9 +47,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 /**
  * 사용자가 추가할 메모를 작성할 수 있도록 UI를 제공하는 액티비티
  * 사용자가 입력을 다한 후, 추가 버튼에 대한 이벤트가 발생했을 경우, addPresenter에게 DB 추가 요청을 한다.
+ * ButterKnife 라이브러리 사용 https://github.com/JakeWharton/butterknife
+ * RecyclerView 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0
@@ -52,6 +62,7 @@ import butterknife.OnClick;
 public class AddViewActivity extends AppCompatActivity implements AddContract.view {
     private AddPresenter presenter; //presenter
     private List<String> imageList = new ArrayList<>();
+    public Uri photoURI;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.add_content_edit)  EditText contentEditText;
@@ -91,7 +102,7 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     @Override
     public void backListView() {
         Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -117,16 +128,14 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     public void addCameraImage() {
         CameraFunction cameraFunction = new CameraFunction(this);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFIle = null;
             photoFIle = cameraFunction.createImageFile();
-            if(photoFIle != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFIle);
+            if (photoFIle != null) {
+                photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 cameraFunction.galleryAddPic(photoURI.toString());
-                changeImageRecyclerView(photoURI.toString());
-
             }
         }
     }
@@ -160,17 +169,6 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         ad.show();
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode == REQUEST_IMAGE_ALBUM) {
-            if(data == null) return;
-            String path = data.getData().toString();
-            changeImageRecyclerView(path);
-        }
-    }
-
     /**
      * 사용자가 이미지를 추가했을 경우, 추가된 이미지를 보여주고 있는 RecyclerView를 최신화 시킨다.
      *
@@ -178,31 +176,12 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void changeImageRecyclerView(String path) {
-        System.out.println(Glide.with(this).load(path));
         imageList.add(path);
         ImageAdapter adapter = new ImageAdapter(imageList,this);
         addRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         addRecyclerView.setAdapter(adapter);
         addRecyclerView.setItemAnimator(new DefaultItemAnimator());
         addRecyclerView.setNestedScrollingEnabled(false);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_view_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.menu_add_btn:
-                addMemo();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     /**
@@ -214,4 +193,38 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     public void notifyDeleteImage(List<String> imageList) {
         this.imageList = imageList;
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.add_view_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_add_btn:
+                addMemo();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == REQUEST_IMAGE_ALBUM) {
+            if(data == null) return;
+            String path = data.getData().toString();
+            changeImageRecyclerView(path);
+        }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if(photoURI == null) return;
+            changeImageRecyclerView(photoURI.toString());
+            photoURI = null;
+        }
+    }
+
+
 }

@@ -21,6 +21,8 @@ import java.util.List;
 
 /**
  * EditViewActivity에서 사용하는 리사이클러 뷰에 대한 어뎁터 클래스
+ * Glide 라이브러리 사용 https://github.com/bumptech/glide
+ * RecyclerView 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0

@@ -23,9 +23,13 @@ import com.example.linetextbook.database.MemoEntity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 /**
  * 사용자가 터치한 메모의 상세한 정보를 UI를 통해 보여주는 액티비티
  * 사용자는 메뉴를 통해 편집,삭제 기능을 이용할 수 있다.
+ * ButterKnife 라이브러리 사용 https://github.com/JakeWharton/butterknife
+ * Glide 라이브러리 사용 https://github.com/bumptech/glide
  *
  * @author 이윤복
  * @version 1.0
@@ -34,8 +38,8 @@ import butterknife.ButterKnife;
 public class DetailViewActivity extends AppCompatActivity implements DetailContract.view {
     private DetailPresenter presenter;
     private MemoEntity memo;
-    @BindView(R.id.contentView)  TextView contentView;
-    @BindView(R.id.titleView)  TextView titleView;
+    @BindView(R.id.detail_content_view)  TextView detail_content_view;
+    @BindView(R.id.detail_title_view)  TextView detail_title_view;
     @BindView(R.id.detail_time_view) TextView detail_time_view;
     @BindView(R.id.detail_image_container) LinearLayout detail_image_container;
 
@@ -67,8 +71,8 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         Intent intent = getIntent();
         memo = (MemoEntity) intent.getSerializableExtra("MEMO");
         String[] imageList = memo.getImageList();
-        titleView.setText(memo.getTitle());
-        contentView.setText(memo.getContent());
+        detail_title_view.setText(memo.getTitle());
+        detail_content_view.setText(memo.getContent());
         detail_time_view.setText(memo.getTime());
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(
@@ -79,7 +83,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         );
         for(String image : imageList) {
             ImageView imageView = new ImageView(this);
-            Glide.with(this).load(Uri.parse(image)).into(imageView);
+            Glide.with(this).load(Uri.parse(image)).error(R.drawable.ic_broken_image).into(imageView);
             imageView.setLayoutParams(layoutParams);
             imageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
             imageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -94,7 +98,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @Override
     public void backListView() {
         Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -110,8 +114,9 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         Intent intent;
         switch (item.getItemId()) {
             case R.id.menu_edit_btn:
-                intent = new Intent(this,EditViewActivity.class);
+                intent = new Intent(this,com.example.linetextbook.view.EditViewActivity.class);
                 intent.putExtra("MEMO",memo);
+                intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
             case R.id.menu_delete_btn:

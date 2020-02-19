@@ -35,9 +35,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+
 /**
  * 메모를 수정할 수 있도록 UI를 제공하는 액티비티
  * 사용자는 제목, 내용, 이미지를 변경할 수 있다.
+ * ButterKnife 라이브러리 사용 https://github.com/JakeWharton/butterknife
+ * RecyclerView 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0
@@ -48,6 +52,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     private MemoEntity memo;
     private List<String> imageList;
     private EditPresenter presenter;
+    public Uri photoURI;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.edit_title_edit) EditText edit_title;
@@ -94,21 +99,23 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         startActivityForResult(intent,REQUEST_IMAGE_ALBUM);
     }
 
+    /**
+     * 사용자가 add_camera_image_btn을 클릭한 경우 호출되는 이벤트 콜백메서드
+     * 카메라 촬영을 통해 이미지를 받아온다.
+     */
     @OnClick(R.id.edit_camera_image_btn)
     @Override
     public void addCameraImage() {
         CameraFunction cameraFunction = new CameraFunction(this);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(takePictureIntent.resolveActivity(getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             File photoFIle = null;
             photoFIle = cameraFunction.createImageFile();
-            if(photoFIle != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFIle);
+            if (photoFIle != null) {
+                photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
                 cameraFunction.galleryAddPic(photoURI.toString());
-                changeImageRecyclerView(photoURI.toString());
-
             }
         }
     }
@@ -126,7 +133,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String Url = et.getText().toString();
-                if(!Url.contains("http://") || !Url.contains("https://")) {
+                if(!Url.contains("http://") && !Url.contains("https://")) {
                     Toast.makeText(getApplicationContext(), "올바르지 않은 URL 입니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -135,16 +142,6 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         });
 
         ad.show();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if(requestCode == REQUEST_IMAGE_ALBUM) {
-            if(data == null) return;
-            String path = data.getData().toString();
-            changeImageRecyclerView(path);
-        }
     }
 
     /**
@@ -168,7 +165,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     @Override
     public void backListView() {
         Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -210,6 +207,21 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode,resultCode,data);
+        if(requestCode == REQUEST_IMAGE_ALBUM) {
+            if(data == null) return;
+            String path = data.getData().toString();
+            changeImageRecyclerView(path);
+        }
+        else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if(photoURI == null) return;
+            changeImageRecyclerView(photoURI.toString());
+            photoURI = null;
         }
     }
 }

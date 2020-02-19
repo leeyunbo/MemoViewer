@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 /**
  * DB의 인스턴스를 반환해주는 클래스
+ * Room 라이브러리 사용
  *
  * @author 이윤복
  * @version 1.0
