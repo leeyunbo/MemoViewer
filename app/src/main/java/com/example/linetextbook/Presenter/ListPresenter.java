@@ -13,13 +13,13 @@ import java.util.List;
  * @version 1.0
  */
 public class ListPresenter implements ListContract.presenter {
-    private ListViewActivity view;
-    private MemoModel model;
+    private ListViewActivity mView;
+    private MemoModel mModel;
 
 
     public ListPresenter(ListViewActivity view) {
-        this.view = view;
-        this.model = new MemoModel(view.getApplicationContext(),this);
+        this.mView = view;
+        this.mModel = new MemoModel(view.getApplicationContext(),this);
     }
 
     /**
@@ -27,7 +27,7 @@ public class ListPresenter implements ListContract.presenter {
      */
     @Override
     public void requestMemoList() {
-        model.getMemoList();
+        mModel.getMemoList();
     }
 
     /**
@@ -38,6 +38,6 @@ public class ListPresenter implements ListContract.presenter {
      */
     @Override
     public void notifyItemReceived(List<MemoEntity> memoData) {
-        view.changeRecyclerView(memoData);
+        mView.changeRecyclerView(memoData);
     }
 }

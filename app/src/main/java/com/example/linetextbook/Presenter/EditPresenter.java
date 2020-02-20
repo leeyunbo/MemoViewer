@@ -11,12 +11,12 @@ import com.example.linetextbook.view.EditViewActivity;
  * @version 1.0
  */
 public class EditPresenter implements EditContract.presenter {
-    private EditViewActivity view;
-    private MemoModel model;
+    private EditViewActivity mView;
+    private MemoModel mModel;
 
     public EditPresenter(EditViewActivity view) {
-        this.view = view;
-        this.model = new MemoModel(view.getApplicationContext(),this);
+        this.mView = view;
+        this.mModel = new MemoModel(view.getApplicationContext(),this);
     }
 
     /**
@@ -24,7 +24,7 @@ public class EditPresenter implements EditContract.presenter {
      */
     @Override
     public void requestEditMemo(MemoEntity memo) {
-        model.doEditMemo(memo);
+        mModel.doEditMemo(memo);
     }
 
     /**
@@ -32,6 +32,6 @@ public class EditPresenter implements EditContract.presenter {
      */
     @Override
     public void notifyItemEdit() {
-        view.backListView();
+        mView.backListView();
     }
 }

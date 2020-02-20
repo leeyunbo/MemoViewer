@@ -1,13 +1,10 @@
 package com.example.linetextbook.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -29,8 +26,8 @@ import java.util.List;
  */
 
 public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.ViewHolder> {
-    List<String> imageList;
-    EditViewActivity context;
+    private List<String> mImageList;
+    private EditViewActivity mContext;
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView add_imageView;
         ImageView delete_image_btn;
@@ -47,25 +44,25 @@ public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.View
                  */
                 @Override
                 public void onClick(View v) {
-                    imageList.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
-                    notifyItemRangeChanged(getAdapterPosition(), imageList.size());
-                    context.notifyDeleteImage(imageList);
+                    int mPosition = getAdapterPosition();
+                    mImageList.remove(mPosition);
+                    notifyItemRemoved(mPosition);
+                    notifyItemRangeChanged(mPosition, mImageList.size());
+                    mContext.notifyDeleteImage(mImageList);
                 }
             });
         }
     }
 
     public ImageEditAdapter(List<String> imageList, EditViewActivity context) {
-        this.imageList = imageList;
-        this.context = context;
+        this.mImageList = imageList;
+        this.mContext = context;
     }
 
     @NonNull
     @Override
     public ImageEditAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.list_image_layout, parent, false);
         ImageEditAdapter.ViewHolder vh = new ImageEditAdapter.ViewHolder(view);
         return vh;
@@ -73,16 +70,23 @@ public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ImageEditAdapter.ViewHolder holder, int position) {
-        if(imageList.get(position).contains("http://") || imageList.get(position).contains("https://")) {
-            Glide.with(context).load(imageList.get(position)).error(R.drawable.ic_broken_image).into(holder.add_imageView);
+        String mUrl = mImageList.get(position);
+        if(mUrl.contains("http://") || mUrl.contains("https://")) {
+            Glide.with(mContext)
+                    .load(mUrl)
+                    .error(R.drawable.ic_broken_image)
+                    .into(holder.add_imageView);
         }
         else {
-            Glide.with(context).load(imageList.get(position)).error(R.drawable.ic_broken_image).into(holder.add_imageView);
+            Glide.with(mContext)
+                    .load(mUrl)
+                    .error(R.drawable.ic_broken_image)
+                    .into(holder.add_imageView);
         }
     }
 
     @Override
     public int getItemCount() {
-        return imageList == null ? null : imageList.size();
+        return mImageList == null ? null : mImageList.size();
     }
 }

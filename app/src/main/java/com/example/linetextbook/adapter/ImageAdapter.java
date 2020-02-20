@@ -27,11 +27,11 @@ import java.util.List;
  */
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
-    List<String> imageList;
-    AddViewActivity context;
-    ImageView delete_image_btn;
+    private List<String> mImageList;
+    private AddViewActivity mContext;
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView add_imageView;
+        ImageView delete_image_btn;
         ViewHolder(View view) {
             super(view);
             add_imageView = view.findViewById(R.id.add_imageView);
@@ -45,25 +45,25 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                  */
                 @Override
                 public void onClick(View v) {
-                    imageList.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
-                    notifyItemRangeChanged(getAdapterPosition(), imageList.size());
-                    context.notifyDeleteImage(imageList);
+                    int mPosition = getAdapterPosition();
+                    mImageList.remove(mPosition);
+                    notifyItemRemoved(mPosition);
+                    notifyItemRangeChanged(mPosition, mImageList.size());
+                    mContext.notifyDeleteImage(mImageList);
                 }
             });
         }
     }
 
     public ImageAdapter(List<String> imageList, AddViewActivity context) {
-        this.imageList = imageList;
-        this.context = context;
+        this.mImageList = imageList;
+        this.mContext = context;
     }
 
     @NonNull
     @Override
     public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.list_image_layout, parent, false);
         ImageAdapter.ViewHolder vh = new ImageAdapter.ViewHolder(view);
         return vh;
@@ -71,17 +71,23 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ImageAdapter.ViewHolder holder, int position) {
-        if(imageList.get(position).contains("http://") || imageList.get(position).contains("https://")) {
-            Glide.with(context).load(imageList.get(position)).error(R.drawable.ic_broken_image).into(holder.add_imageView);
-
+        String mUrl = mImageList.get(position);
+        if(mUrl.contains("http://") || mUrl.contains("https://")) {
+            Glide.with(mContext)
+                    .load(mUrl)
+                    .error(R.drawable.ic_broken_image)
+                    .into(holder.add_imageView);
         }
         else{
-            Glide.with(context).load(Uri.parse(imageList.get(position))).error(R.drawable.ic_broken_image).into(holder.add_imageView);
+            Glide.with(mContext)
+                    .load(Uri.parse(mUrl))
+                    .error(R.drawable.ic_broken_image)
+                    .into(holder.add_imageView);
         }
     }
 
     @Override
     public int getItemCount() {
-        return imageList == null ? null : imageList.size();
+        return mImageList == null ? null : mImageList.size();
     }
 }

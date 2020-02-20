@@ -12,12 +12,12 @@ import com.example.linetextbook.view.AddViewActivity;
  * @version 1.0
  */
 public class AddPresenter implements AddContract.presenter {
-    AddViewActivity view;
-    MemoModel model;
+    private AddViewActivity mView;
+    private MemoModel mModel;
 
     public AddPresenter(AddViewActivity view) {
-        this.view = view;
-        this.model = new MemoModel(view.getApplicationContext(),this);
+        this.mView = view;
+        this.mModel = new MemoModel(view.getApplicationContext(),this);
     }
 
     /**
@@ -25,7 +25,7 @@ public class AddPresenter implements AddContract.presenter {
      */
     @Override
     public void requestAddMemo(MemoEntity memo) {
-        model.doAddMemo(memo);
+        mModel.doAddMemo(memo);
     }
 
     /**
@@ -33,6 +33,6 @@ public class AddPresenter implements AddContract.presenter {
      */
     @Override
     public void notifyAddSucceed() {
-        view.backListView();
+        mView.backListView();
     }
 }

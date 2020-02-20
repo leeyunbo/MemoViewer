@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,9 +39,14 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class ListViewActivity extends AppCompatActivity implements ListContract.view {
-    private ListPresenter presenter;
-    private List<MemoEntity> memoData;
-    private String[] permissions = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.INTERNET,Manifest.permission.READ_EXTERNAL_STORAGE};
+    private ListPresenter mPresenter;
+    private List<MemoEntity> mMemoData;
+    private String[] mPermissions =
+                    {Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.READ_EXTERNAL_STORAGE};
+
     @BindView(R.id.memoCount) TextView memoCount;
     @BindView(R.id.list_add_Btn) ImageView list_add_btn;
     @BindView(R.id.memoRecyclerView) RecyclerView memoRecyclerView;
@@ -51,13 +55,13 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
-        presenter = new ListPresenter(this);
+        mPresenter = new ListPresenter(this);
         ButterKnife.bind(this);
         getSupportActionBar().hide();
         if(Build.VERSION.SDK_INT >= 23){
             if(PackageManager.PERMISSION_GRANTED !=
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                requestPermissions(permissions, 0);
+                requestPermissions(mPermissions, 0);
             }
         }
         showMemoList();
@@ -69,7 +73,8 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
      */
     @OnClick(R.id.list_add_Btn)
     public void addBtnClick() {
-        Intent intent = new Intent(this, com.example.linetextbook.view.AddViewActivity.class);
+        Intent intent =
+                new Intent(this, com.example.linetextbook.view.AddViewActivity.class);
         intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
@@ -79,7 +84,7 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
      */
     @Override
     public void showMemoList() {
-        presenter.requestMemoList();
+        mPresenter.requestMemoList();
     }
 
     /**
@@ -90,7 +95,7 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
      */
     @Override
     public void changeRecyclerView(List<MemoEntity> memoData) {
-        this.memoData = memoData;
+        this.mMemoData = memoData;
         MemoAdapter adapter = new MemoAdapter(memoData,this);
         memoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         memoRecyclerView.setAdapter(adapter);
@@ -101,12 +106,13 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
         switch (requestCode) {
             case 0:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                }else {
-                    Toast.makeText(this,"허용해주세요.",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this,"권한이 허용되었습니다.",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this,"권한을 허용하셔야 이용가능합니다.",Toast.LENGTH_SHORT).show();
                     finish();
                 }
                 return;

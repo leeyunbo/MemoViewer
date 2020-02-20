@@ -18,35 +18,35 @@ import java.util.List;
  * @version 1.0
  */
 public class MemoModel{
-    private AddPresenter addPresenter;
-    private DetailPresenter detailPresenter;
-    private EditPresenter editPresenter;
-    private ListPresenter listPresenter;
-    private MemoDAO memoDAO;
+    private AddPresenter mAddPresenter;
+    private DetailPresenter mDetailPresenter;
+    private EditPresenter mEditPresenter;
+    private ListPresenter mListPresenter;
+    private MemoDAO mMemoDAO;
+    private static MemoDatabase sDataBase;
 
-    private static MemoDatabase db;
     public MemoModel(Context context, AddPresenter presenter) {
-        db = MemoDatabase.getInstance(context);
-        this.addPresenter = presenter;
-        this.memoDAO = db.memoDAO();
+        sDataBase = MemoDatabase.getInstance(context);
+        this.mAddPresenter = presenter;
+        this.mMemoDAO = sDataBase.memoDAO();
     }
 
     public MemoModel(Context context, DetailPresenter presenter) {
-        db = MemoDatabase.getInstance(context);
-        this.detailPresenter = presenter;
-        this.memoDAO = db.memoDAO();
+        sDataBase = MemoDatabase.getInstance(context);
+        this.mDetailPresenter = presenter;
+        this.mMemoDAO = sDataBase.memoDAO();
     }
 
     public MemoModel(Context context, EditPresenter presenter) {
-        db = MemoDatabase.getInstance(context);
-        this.editPresenter = presenter;
-        this.memoDAO = db.memoDAO();
+        sDataBase = MemoDatabase.getInstance(context);
+        this.mEditPresenter = presenter;
+        this.mMemoDAO = sDataBase.memoDAO();
     }
 
     public MemoModel(Context context, ListPresenter presenter) {
-        db = MemoDatabase.getInstance(context);
-        this.listPresenter = presenter;
-        this.memoDAO = db.memoDAO();
+        sDataBase = MemoDatabase.getInstance(context);
+        this.mListPresenter = presenter;
+        this.mMemoDAO = sDataBase.memoDAO();
     }
 
     /**
@@ -57,11 +57,11 @@ public class MemoModel{
             @Override
             public void run() {
                 List<MemoEntity> memoData = null;
-                memoData = memoDAO.getMemoList();
+                memoData = mMemoDAO.getMemoList();
                 for(MemoEntity data : memoData) {
                     data.setImageList(ArrayConverters.convertStringToArray(data.getImageUrl()));
                 }
-                listPresenter.notifyItemReceived(memoData);
+                mListPresenter.notifyItemReceived(memoData);
             }
         };
         Thread thread = new Thread(r);
@@ -80,8 +80,8 @@ public class MemoModel{
             public void run() {
                 String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
                 memo.setImageUrl(stringImageUrl);
-                memoDAO.doEditMemo(memo);
-                editPresenter.notifyItemEdit();
+                mMemoDAO.doEditMemo(memo);
+                mEditPresenter.notifyItemEdit();
             }
         };
         Thread thread = new Thread(r);
@@ -102,8 +102,8 @@ public class MemoModel{
                     String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
                     memo.setImageUrl(stringImageUrl);
                 }
-                memoDAO.doAddMemo(memo);
-                addPresenter.notifyAddSucceed();
+                mMemoDAO.doAddMemo(memo);
+                mAddPresenter.notifyAddSucceed();
             }
         };
         Thread thread = new Thread(r);
@@ -120,9 +120,9 @@ public class MemoModel{
             @Override
             public void run()
             {
-                int a = memoDAO.doDeleteMemo(memo);
+                int a = mMemoDAO.doDeleteMemo(memo);
                 System.out.println(a);
-                detailPresenter.notifyItemDelete();
+                mDetailPresenter.notifyItemDelete();
             }
         };
         Thread thread = new Thread(r);

@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class ArrayConverters {
-    public static String strSeparator = "__,__";
+    public static String sStrSeparator = "__,__";
 
     /**
      * Array 타입을 String 타입으로 변환하는 메서드
@@ -21,14 +21,14 @@ public class ArrayConverters {
      * @return Array 타입 변수를 String으로 변환시켜 반환
      */
     public static String convertArrayToString(String[] array){
-        String str = "";
+        String mStr = "";
         for (int i = 0;i<array.length; i++) {
-            str = str+array[i];
+            mStr = mStr+array[i];
             if(i<array.length-1){
-                str = str+strSeparator;
+                mStr = mStr + sStrSeparator;
             }
         }
-        return str;
+        return mStr;
     }
 
     /**
@@ -38,8 +38,8 @@ public class ArrayConverters {
      * @return String 타입 변수를 Array 타입으로 변환시켜 반환
      */
     public static String[] convertStringToArray(String str){
-        String[] arr = str.split(strSeparator);
-        return arr;
+        String[] mArr = str.split(sStrSeparator);
+        return mArr;
     }
 
     /**
@@ -49,10 +49,10 @@ public class ArrayConverters {
      * @return Array 타입 변수를 List 타입 객체로 변환시켜 반환
      */
     public static List<String> convertArrayToList(String[] array) {
-        List<String> list = new ArrayList<String>();
+        List<String> mList = new ArrayList<String>();
         for(int i=0; i<array.length; i++) {
-            list.add(array[i]);
+            mList.add(array[i]);
         }
-        return list;
+        return mList;
     }
 }

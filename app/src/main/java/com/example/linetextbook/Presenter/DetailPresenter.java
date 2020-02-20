@@ -11,12 +11,12 @@ import com.example.linetextbook.view.DetailViewActivity;
  * @version 1.0
  */
 public class DetailPresenter implements DetailContract.presenter {
-    private DetailViewActivity view;
-    private MemoModel model;
+    private DetailViewActivity mView;
+    private MemoModel mModel;
 
     public DetailPresenter(DetailViewActivity view) {
-        this.model = new MemoModel(view.getApplicationContext(),this);
-        this.view = view;
+        this.mModel = new MemoModel(view.getApplicationContext(),this);
+        this.mView = view;
     }
 
     /**
@@ -24,7 +24,7 @@ public class DetailPresenter implements DetailContract.presenter {
      */
     @Override
     public void requestDeleteMemo(MemoEntity memo) {
-        model.doDeleteMemo(memo);
+        mModel.doDeleteMemo(memo);
     }
 
 
@@ -33,6 +33,6 @@ public class DetailPresenter implements DetailContract.presenter {
      */
     @Override
     public void notifyItemDelete() {
-        view.backListView();
+        mView.backListView();
     }
 }

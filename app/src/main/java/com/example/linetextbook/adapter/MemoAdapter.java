@@ -2,11 +2,7 @@ package com.example.linetextbook.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.provider.MediaStore;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +15,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
-import com.example.linetextbook.view.DetailViewActivity;
-import com.example.linetextbook.view.ListViewActivity;
 
 import java.util.List;
 
@@ -34,9 +28,8 @@ import java.util.List;
  */
 
 public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
-
-    private Context context;
-    private List<MemoEntity> memoData = null;
+    private Context mContext;
+    private List<MemoEntity> mMemoData;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView list_title;
@@ -56,24 +49,23 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
                  */
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), com.example.linetextbook.view.DetailViewActivity.class);
-                    intent.putExtra("MEMO",memoData.get(getAdapterPosition()));
-                    v.getContext().startActivity(intent);
+                    Intent intent = new Intent(mContext, com.example.linetextbook.view.DetailViewActivity.class);
+                    intent.putExtra("MEMO", mMemoData.get(getAdapterPosition()));
+                    mContext.startActivity(intent);
                 }
             });
         }
     }
 
     public MemoAdapter(List<MemoEntity> memoData, Context context) {
-        this.context = context;
-        this.memoData = memoData;
+        this.mContext = context;
+        this.mMemoData = memoData;
     }
 
     @NonNull
     @Override
     public MemoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.list_element_layout, parent, false);
         MemoAdapter.ViewHolder vh = new MemoAdapter.ViewHolder(view);
         return vh;
@@ -81,16 +73,19 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MemoAdapter.ViewHolder holder, int position) {
-        String title = memoData.get(position).getTitle();
-        String content = memoData.get(position).getContent();
-        String[] imageList = memoData.get(position).getImageList();
-        Glide.with(context).load(Uri.parse(imageList[0])).into(holder.list_image);
-        holder.list_title.setText(title);
-        holder.list_content.setText(content);
+        MemoEntity mMemo = mMemoData.get(position);
+        String[] imageList = mMemo.getImageList();
+
+        Glide.with(mContext)
+                .load(Uri.parse(imageList[0]))
+                .error(R.drawable.ic_broken_image)
+                .into(holder.list_image);
+        holder.list_title.setText(mMemo.getTitle());
+        holder.list_content.setText(mMemo.getContent());
     }
 
     @Override
     public int getItemCount() {
-        return memoData == null ? null : memoData.size();
+        return mMemoData == null ? null : mMemoData.size();
     }
 }

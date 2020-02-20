@@ -12,14 +12,14 @@ import java.util.List;
 
 public interface DetailContract {
     interface view {
-        void deleteMemo(); //메모 삭제 메서드, presenter에게 요청
-        void showMemoDetail(); //클릭한 메모의 상세 내용을 출력한다.
-        void backListView(); //다시 홈으로 복귀
+        void deleteMemo();
+        void showMemoDetail();
+        void backListView();
     }
 
     interface presenter {
-        void requestDeleteMemo(MemoEntity memo); //메모 삭제 요청 메서드, Model에게 요청
-        void notifyItemDelete(); //메모 삭제 완료시 호출되는 콜백 메서드
+        void requestDeleteMemo(MemoEntity memo);
+        void notifyItemDelete(); 
     }
 
 

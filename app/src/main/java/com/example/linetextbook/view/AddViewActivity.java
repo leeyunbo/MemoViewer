@@ -2,22 +2,15 @@ package com.example.linetextbook.view;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.example.linetextbook.CameraFunction;
 import com.example.linetextbook.adapter.ImageAdapter;
 import com.example.linetextbook.contract.AddContract;
@@ -34,10 +26,6 @@ import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.security.Permission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,9 +48,9 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class AddViewActivity extends AppCompatActivity implements AddContract.view {
-    private AddPresenter presenter; //presenter
-    private List<String> imageList = new ArrayList<>();
-    public Uri photoURI;
+    private AddPresenter mPresenter; //mPresenter
+    private List<String> mImageList = new ArrayList<>();
+    private Uri mPhotoURI;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.add_content_edit)  EditText contentEditText;
@@ -77,7 +65,7 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_view);
         ButterKnife.bind(this);
-        this.presenter = new AddPresenter(this);
+        this.mPresenter = new AddPresenter(this);
     }
 
     /**
@@ -91,9 +79,9 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         String content = contentEditText.getText().toString();
         String time = format2.format(date);
         MemoEntity memo;
-        if(imageList == null) memo = new MemoEntity(title,content,time,null);
-        else memo = new MemoEntity(title,content,time,imageList.toArray(new String[0]));
-        presenter.requestAddMemo(memo);
+        if(mImageList == null) memo = new MemoEntity(title,content,time,null);
+        else memo = new MemoEntity(title,content,time, mImageList.toArray(new String[0]));
+        mPresenter.requestAddMemo(memo);
     }
 
     /**
@@ -132,10 +120,11 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
             File photoFIle = null;
             photoFIle = cameraFunction.createImageFile();
             if (photoFIle != null) {
-                photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                mPhotoURI =
+                        FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                cameraFunction.galleryAddPic(photoURI.toString());
+                cameraFunction.galleryAddPic(mPhotoURI.toString());
             }
         }
     }
@@ -176,8 +165,8 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void changeImageRecyclerView(String path) {
-        imageList.add(path);
-        ImageAdapter adapter = new ImageAdapter(imageList,this);
+        mImageList.add(path);
+        ImageAdapter adapter = new ImageAdapter(mImageList,this);
         addRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         addRecyclerView.setAdapter(adapter);
         addRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -191,7 +180,7 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void notifyDeleteImage(List<String> imageList) {
-        this.imageList = imageList;
+        this.mImageList = imageList;
     }
 
     @Override
@@ -220,9 +209,9 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
             changeImageRecyclerView(path);
         }
         else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if(photoURI == null) return;
-            changeImageRecyclerView(photoURI.toString());
-            photoURI = null;
+            if(mPhotoURI == null) return;
+            changeImageRecyclerView(mPhotoURI.toString());
+            mPhotoURI = null;
         }
     }
 

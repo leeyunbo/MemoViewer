@@ -1,6 +1,5 @@
 package com.example.linetextbook.view;
 
-import androidx.annotation.ContentView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActionBar;
@@ -9,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -36,8 +34,8 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class DetailViewActivity extends AppCompatActivity implements DetailContract.view {
-    private DetailPresenter presenter;
-    private MemoEntity memo;
+    private DetailPresenter mPresenter;
+    private MemoEntity mMemo;
     @BindView(R.id.detail_content_view)  TextView detail_content_view;
     @BindView(R.id.detail_title_view)  TextView detail_title_view;
     @BindView(R.id.detail_time_view) TextView detail_time_view;
@@ -47,7 +45,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_view);
-        presenter = new DetailPresenter(this);
+        mPresenter = new DetailPresenter(this);
         ButterKnife.bind(this);
         showMemoDetail();
     }
@@ -59,7 +57,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @Override
     public void deleteMemo()
     {
-        presenter.requestDeleteMemo(memo);
+        mPresenter.requestDeleteMemo(mMemo);
     }
 
     /**
@@ -69,25 +67,26 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @Override
     public void showMemoDetail() {
         Intent intent = getIntent();
-        memo = (MemoEntity) intent.getSerializableExtra("MEMO");
-        String[] imageList = memo.getImageList();
-        detail_title_view.setText(memo.getTitle());
-        detail_content_view.setText(memo.getContent());
-        detail_time_view.setText(memo.getTime());
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT);
+        mMemo = (MemoEntity) intent.getSerializableExtra("MEMO");
+        String[] mImageList = mMemo.getImageList();
+        detail_title_view.setText(mMemo.getTitle());
+        detail_content_view.setText(mMemo.getContent());
+        detail_time_view.setText(mMemo.getTime());
+        LinearLayout.LayoutParams layoutParams =
+                new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin)
         );
-        for(String image : imageList) {
-            ImageView imageView = new ImageView(this);
-            Glide.with(this).load(Uri.parse(image)).error(R.drawable.ic_broken_image).into(imageView);
-            imageView.setLayoutParams(layoutParams);
-            imageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            detail_image_container.addView(imageView);
+        for(String image : mImageList) {
+            ImageView mImageView = new ImageView(this);
+            Glide.with(this).load(Uri.parse(image)).error(R.drawable.ic_broken_image).into(mImageView);
+            mImageView.setLayoutParams(layoutParams);
+            mImageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
+            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            detail_image_container.addView(mImageView);
         }
     }
 
@@ -115,7 +114,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         switch (item.getItemId()) {
             case R.id.menu_edit_btn:
                 intent = new Intent(this,com.example.linetextbook.view.EditViewActivity.class);
-                intent.putExtra("MEMO",memo);
+                intent.putExtra("MEMO", mMemo);
                 intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;

@@ -16,11 +16,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.linetextbook.CameraFunction;
-import com.example.linetextbook.adapter.ImageAdapter;
 import com.example.linetextbook.adapter.ImageEditAdapter;
 import com.example.linetextbook.contract.EditContract;
 import com.example.linetextbook.Presenter.EditPresenter;
@@ -49,10 +47,10 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 
 public class EditViewActivity extends AppCompatActivity implements EditContract.view
 {
-    private MemoEntity memo;
-    private List<String> imageList;
-    private EditPresenter presenter;
-    public Uri photoURI;
+    private MemoEntity mMemo;
+    private List<String> mImageList;
+    private EditPresenter mPresenter;
+    private Uri mPhotoURI;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.edit_title_edit) EditText edit_title;
@@ -67,7 +65,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_view);
-        this.presenter = new EditPresenter(this);
+        this.mPresenter = new EditPresenter(this);
         ButterKnife.bind(this);
         getEditMemoInform();
     }
@@ -79,11 +77,11 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     @Override
     public void getEditMemoInform() {
         Intent intent = getIntent();
-        memo = (MemoEntity) intent.getSerializableExtra("MEMO");
-        edit_title.setText(memo.getTitle());
-        edit_content.setText(memo.getContent());
-        this.imageList = ArrayConverters.convertArrayToList(memo.getImageList());
-        ImageEditAdapter adapter = new ImageEditAdapter(imageList,this);
+        mMemo = (MemoEntity) intent.getSerializableExtra("MEMO");
+        edit_title.setText(mMemo.getTitle());
+        edit_content.setText(mMemo.getContent());
+        this.mImageList = ArrayConverters.convertArrayToList(mMemo.getImageList());
+        ImageEditAdapter adapter = new ImageEditAdapter(mImageList,this);
         editRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         editRecyclerView.setAdapter(adapter);
         editRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -109,13 +107,13 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         CameraFunction cameraFunction = new CameraFunction(this);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFIle = null;
+            File photoFIle;
             photoFIle = cameraFunction.createImageFile();
             if (photoFIle != null) {
-                photoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                mPhotoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                cameraFunction.galleryAddPic(photoURI.toString());
+                cameraFunction.galleryAddPic(mPhotoURI.toString());
             }
         }
     }
@@ -123,25 +121,24 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     @OnClick(R.id.edit_url_image_btn)
     @Override
     public void addUrlImage() {
-        AlertDialog.Builder ad = new AlertDialog.Builder(this);
-        ad.setTitle("URL 입력");
-        ad.setMessage("http://www.url.com 형식으로 입력해주세요.");
+        AlertDialog.Builder mUrlAD = new AlertDialog.Builder(this);
+        final EditText mUrlET = new EditText(this);
 
-        final EditText et = new EditText(this);
-        ad.setView(et);
-        ad.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+        mUrlAD.setTitle("URL 입력");
+        mUrlAD.setMessage("https://www.url.com 형식으로 입력해주세요.");
+        mUrlAD.setView(mUrlET);
+        mUrlET.setText("https://");
+        mUrlAD.setPositiveButton("입력", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String Url = et.getText().toString();
-                if(!Url.contains("http://") && !Url.contains("https://")) {
+                String mUrl = mUrlET.getText().toString();
+                if(!mUrl.contains("http://") && !mUrl.contains("https://")) {
                     Toast.makeText(getApplicationContext(), "올바르지 않은 URL 입니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                changeImageRecyclerView(Url);
+                changeImageRecyclerView(mUrl);
             }
-        });
-
-        ad.show();
+        }).show();
     }
 
     /**
@@ -151,8 +148,8 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
      */
     @Override
     public void changeImageRecyclerView(String path) {
-        imageList.add(path);
-        ImageEditAdapter adapter = new ImageEditAdapter(imageList,this);
+        mImageList.add(path);
+        ImageEditAdapter adapter = new ImageEditAdapter(mImageList,this);
         editRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
         editRecyclerView.setAdapter(adapter);
         editRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -175,7 +172,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
      */
     @Override
     public void editMemo() {
-        presenter.requestEditMemo(memo);
+        mPresenter.requestEditMemo(mMemo);
     }
 
     /**
@@ -185,7 +182,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
      */
     @Override
     public void notifyDeleteImage(List<String> imageList) {
-        this.imageList = imageList;
+        this.mImageList = imageList;
     }
 
     @Override
@@ -196,13 +193,11 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        Intent intent;
         switch (item.getItemId()) {
             case R.id.edit_finish_btn:
-                memo.setTitle(edit_title.getText().toString());
-                memo.setContent(edit_content.getText().toString());
-                memo.setImageList(imageList.toArray(new String[0]));
+                mMemo.setTitle(edit_title.getText().toString());
+                mMemo.setContent(edit_content.getText().toString());
+                mMemo.setImageList(mImageList.toArray(new String[0]));
                 editMemo();
                 return true;
             default:
@@ -219,9 +214,9 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
             changeImageRecyclerView(path);
         }
         else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if(photoURI == null) return;
-            changeImageRecyclerView(photoURI.toString());
-            photoURI = null;
+            if(mPhotoURI == null) return;
+            changeImageRecyclerView(mPhotoURI.toString());
+            mPhotoURI = null;
         }
     }
 }
