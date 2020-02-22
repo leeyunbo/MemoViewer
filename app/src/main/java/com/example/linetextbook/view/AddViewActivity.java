@@ -79,7 +79,7 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         String content = contentEditText.getText().toString();
         String time = format2.format(date);
         MemoEntity memo;
-        if(mImageList == null) memo = new MemoEntity(title,content,time,null);
+        if(mImageList.size() == 0) memo = new MemoEntity(title,content,time,null);
         else memo = new MemoEntity(title,content,time, mImageList.toArray(new String[0]));
         mPresenter.requestAddMemo(memo);
     }

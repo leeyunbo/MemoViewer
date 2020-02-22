@@ -63,7 +63,7 @@ public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.View
     @Override
     public ImageEditAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.list_image_layout, parent, false);
+        View view = inflater.inflate(R.layout.image_list_layout, parent, false);
         ImageEditAdapter.ViewHolder vh = new ImageEditAdapter.ViewHolder(view);
         return vh;
     }

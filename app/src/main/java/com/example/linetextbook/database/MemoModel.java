@@ -59,7 +59,8 @@ public class MemoModel{
                 List<MemoEntity> memoData = null;
                 memoData = mMemoDAO.getMemoList();
                 for(MemoEntity data : memoData) {
-                    data.setImageList(ArrayConverters.convertStringToArray(data.getImageUrl()));
+                    if(data.getImageUrl() != null)
+                        data.setImageList(ArrayConverters.convertStringToArray(data.getImageUrl()));
                 }
                 mListPresenter.notifyItemReceived(memoData);
             }
@@ -78,10 +79,13 @@ public class MemoModel{
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
+                String stringImageUrl;
+                if(memo.getImageList() != null) {
+                    stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
+                }
+                else stringImageUrl = null;
                 memo.setImageUrl(stringImageUrl);
-                int a = mMemoDAO.doEditMemo(memo);
-                System.out.println(a);
+                mMemoDAO.doEditMemo(memo);
                 mEditPresenter.notifyItemEdit();
             }
         };

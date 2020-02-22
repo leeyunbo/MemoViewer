@@ -66,7 +66,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     @Override
     public MemoAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.list_element_layout, parent, false);
+        View view = inflater.inflate(R.layout.memo_list_layout, parent, false);
         MemoAdapter.ViewHolder vh = new MemoAdapter.ViewHolder(view);
         return vh;
     }
@@ -74,14 +74,27 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MemoAdapter.ViewHolder holder, int position) {
         MemoEntity mMemo = mMemoData.get(position);
-        String[] imageList = mMemo.getImageList();
+        holder.list_title.setText(mMemo.getTitle());
+        holder.list_content.setText(mMemo.getContent());
 
+        /**
+         * 만약 해당 메모의 이미지가 존재하지 않는다면, 이미지 없음을 표시한다.
+         */
+        if(mMemo.getImageUrl() == null) {
+            Glide.with(mContext).
+                    load(R.drawable.ic_no_image).
+                    into(holder.list_image);
+            return;
+        }
+
+        /**
+         * 해당 메모의 이미지가 존재한다면, 가지고 있는 이미지 리스트의 첫번째 사진을 표시한다.
+         */
+        String[] imageList = mMemo.getImageList();
         Glide.with(mContext)
                 .load(Uri.parse(imageList[0]))
                 .error(R.drawable.ic_broken_image)
                 .into(holder.list_image);
-        holder.list_title.setText(mMemo.getTitle());
-        holder.list_content.setText(mMemo.getContent());
     }
 
     @Override

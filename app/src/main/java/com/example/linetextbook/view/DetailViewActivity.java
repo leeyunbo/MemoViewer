@@ -80,6 +80,7 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin)
         );
+        if(mImageList == null) return;
         for(String image : mImageList) {
             ImageView mImageView = new ImageView(this);
             Glide.with(this).load(Uri.parse(image)).error(R.drawable.ic_broken_image).into(mImageView);
