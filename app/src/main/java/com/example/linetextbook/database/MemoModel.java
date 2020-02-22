@@ -80,7 +80,8 @@ public class MemoModel{
             public void run() {
                 String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
                 memo.setImageUrl(stringImageUrl);
-                mMemoDAO.doEditMemo(memo);
+                int a = mMemoDAO.doEditMemo(memo);
+                System.out.println(a);
                 mEditPresenter.notifyItemEdit();
             }
         };
@@ -120,8 +121,7 @@ public class MemoModel{
             @Override
             public void run()
             {
-                int a = mMemoDAO.doDeleteMemo(memo);
-                System.out.println(a);
+                mMemoDAO.doDeleteMemo(memo);
                 mDetailPresenter.notifyItemDelete();
             }
         };

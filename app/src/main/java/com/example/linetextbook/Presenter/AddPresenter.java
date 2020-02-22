@@ -14,6 +14,7 @@ import com.example.linetextbook.view.AddViewActivity;
 public class AddPresenter implements AddContract.presenter {
     private AddViewActivity mView;
     private MemoModel mModel;
+    private boolean mSucceed = false;
 
     public AddPresenter(AddViewActivity view) {
         this.mView = view;
@@ -24,8 +25,13 @@ public class AddPresenter implements AddContract.presenter {
      * View에게 요청이 도착하면 Model에게 메모의 추가를 요청하는 메서드
      */
     @Override
-    public void requestAddMemo(MemoEntity memo) {
+    public boolean requestAddMemo(MemoEntity memo) {
         mModel.doAddMemo(memo);
+        if(mSucceed == true) {
+            mSucceed = false;
+            return true;
+        }
+        return mSucceed;
     }
 
     /**
@@ -33,6 +39,7 @@ public class AddPresenter implements AddContract.presenter {
      */
     @Override
     public void notifyAddSucceed() {
+        mSucceed = true;
         mView.backListView();
     }
 }

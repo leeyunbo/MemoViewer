@@ -52,11 +52,12 @@ public class CameraFunction {
      * 수동으로 해당 경로에 대한 파일을 스캔하고 미디어 라이브러리에 파일을 추가하는 메서드
      * @param path 추가할 파일에 대한 경로
      */
-    public void galleryAddPic(String path) {
+    public File galleryAddPic(String path) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(path);
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         context.sendBroadcast(mediaScanIntent);
+        return f;
     }
 }

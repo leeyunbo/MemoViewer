@@ -50,7 +50,7 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 public class AddViewActivity extends AppCompatActivity implements AddContract.view {
     private AddPresenter mPresenter; //mPresenter
     private List<String> mImageList = new ArrayList<>();
-    private Uri mPhotoURI;
+    private Uri mPhotoUri;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.add_content_edit)  EditText contentEditText;
@@ -120,11 +120,11 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
             File photoFIle = null;
             photoFIle = cameraFunction.createImageFile();
             if (photoFIle != null) {
-                mPhotoURI =
+                mPhotoUri =
                         FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                cameraFunction.galleryAddPic(mPhotoURI.toString());
+                cameraFunction.galleryAddPic(mPhotoUri.toString());
             }
         }
     }
@@ -209,9 +209,9 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
             changeImageRecyclerView(path);
         }
         else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if(mPhotoURI == null) return;
-            changeImageRecyclerView(mPhotoURI.toString());
-            mPhotoURI = null;
+            if(mPhotoUri == null) return;
+            changeImageRecyclerView(mPhotoUri.toString());
+            mPhotoUri = null;
         }
     }
 

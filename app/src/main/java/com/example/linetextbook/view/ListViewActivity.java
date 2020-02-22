@@ -109,7 +109,6 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
         switch (requestCode) {
             case 0:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this,"권한이 허용되었습니다.",Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(this,"권한을 허용하셔야 이용가능합니다.",Toast.LENGTH_SHORT).show();

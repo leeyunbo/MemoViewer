@@ -13,6 +13,7 @@ import com.example.linetextbook.view.DetailViewActivity;
 public class DetailPresenter implements DetailContract.presenter {
     private DetailViewActivity mView;
     private MemoModel mModel;
+    private boolean mSucceed = false;
 
     public DetailPresenter(DetailViewActivity view) {
         this.mModel = new MemoModel(view.getApplicationContext(),this);
@@ -23,8 +24,13 @@ public class DetailPresenter implements DetailContract.presenter {
      * View에게 요청이 도착하면 Model에게 메모의 삭제를 요청하는 메서드
      */
     @Override
-    public void requestDeleteMemo(MemoEntity memo) {
+    public boolean requestDeleteMemo(MemoEntity memo) {
         mModel.doDeleteMemo(memo);
+        if(mSucceed == true) {
+            mSucceed = false;
+            return true;
+        }
+        return mSucceed;
     }
 
 
@@ -33,6 +39,7 @@ public class DetailPresenter implements DetailContract.presenter {
      */
     @Override
     public void notifyItemDelete() {
+        mSucceed = true;
         mView.backListView();
     }
 }

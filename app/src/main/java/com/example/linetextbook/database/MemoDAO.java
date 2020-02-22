@@ -28,7 +28,7 @@ public interface MemoDAO {
     List<MemoEntity> getMemoList();
     @Update
     int doEditMemo(MemoEntity memo);
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     void doAddMemo(MemoEntity memo);
     @Delete
     int doDeleteMemo(MemoEntity memo);

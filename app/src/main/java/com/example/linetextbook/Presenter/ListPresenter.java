@@ -15,6 +15,7 @@ import java.util.List;
 public class ListPresenter implements ListContract.presenter {
     private ListViewActivity mView;
     private MemoModel mModel;
+    private boolean mSucceed = false;
 
 
     public ListPresenter(ListViewActivity view) {
@@ -26,8 +27,13 @@ public class ListPresenter implements ListContract.presenter {
      * View에게 요청이 도착하면 Model에게 모든 메모의 데이터를 요청하는 메서드
      */
     @Override
-    public void requestMemoList() {
+    public boolean requestMemoList() {
         mModel.getMemoList();
+        if(mSucceed == true) {
+            mSucceed = false;
+            return true;
+        }
+        return mSucceed;
     }
 
     /**
@@ -38,6 +44,7 @@ public class ListPresenter implements ListContract.presenter {
      */
     @Override
     public void notifyItemReceived(List<MemoEntity> memoData) {
+        mSucceed = true;
         mView.changeRecyclerView(memoData);
     }
 }

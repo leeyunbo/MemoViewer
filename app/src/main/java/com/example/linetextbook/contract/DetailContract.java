@@ -18,7 +18,7 @@ public interface DetailContract {
     }
 
     interface presenter {
-        void requestDeleteMemo(MemoEntity memo);
+        boolean requestDeleteMemo(MemoEntity memo);
         void notifyItemDelete(); 
     }
 

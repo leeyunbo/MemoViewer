@@ -50,7 +50,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
     private MemoEntity mMemo;
     private List<String> mImageList;
     private EditPresenter mPresenter;
-    private Uri mPhotoURI;
+    private Uri mPhotoUri;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
     @BindView(R.id.edit_title_edit) EditText edit_title;
@@ -110,10 +110,10 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
             File photoFIle;
             photoFIle = cameraFunction.createImageFile();
             if (photoFIle != null) {
-                mPhotoURI = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoURI);
+                mPhotoUri = FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                cameraFunction.galleryAddPic(mPhotoURI.toString());
+                cameraFunction.galleryAddPic(mPhotoUri.toString());
             }
         }
     }
@@ -214,9 +214,9 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
             changeImageRecyclerView(path);
         }
         else if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if(mPhotoURI == null) return;
-            changeImageRecyclerView(mPhotoURI.toString());
-            mPhotoURI = null;
+            if(mPhotoUri == null) return;
+            changeImageRecyclerView(mPhotoUri.toString());
+            mPhotoUri = null;
         }
     }
 }

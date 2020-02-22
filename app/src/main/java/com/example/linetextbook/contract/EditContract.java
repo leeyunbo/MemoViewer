@@ -20,7 +20,7 @@ public interface EditContract {
         void notifyDeleteImage(List<String> imageList);
     }
     interface presenter {
-        void requestEditMemo(MemoEntity memo);
+        boolean requestEditMemo(MemoEntity memo);
         void notifyItemEdit();
     }
 }

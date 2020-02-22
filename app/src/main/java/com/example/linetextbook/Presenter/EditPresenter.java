@@ -13,6 +13,7 @@ import com.example.linetextbook.view.EditViewActivity;
 public class EditPresenter implements EditContract.presenter {
     private EditViewActivity mView;
     private MemoModel mModel;
+    private boolean mSucceed = false;
 
     public EditPresenter(EditViewActivity view) {
         this.mView = view;
@@ -23,8 +24,13 @@ public class EditPresenter implements EditContract.presenter {
      * View에게 요청이 도착하면 Model에게 메모의 정보 변경을 요청하는 메서드
      */
     @Override
-    public void requestEditMemo(MemoEntity memo) {
+    public boolean requestEditMemo(MemoEntity memo) {
         mModel.doEditMemo(memo);
+        if(mSucceed == true) {
+            mSucceed = false;
+            return true;
+        }
+        return mSucceed;
     }
 
     /**
@@ -32,6 +38,7 @@ public class EditPresenter implements EditContract.presenter {
      */
     @Override
     public void notifyItemEdit() {
+        mSucceed = true;
         mView.backListView();
     }
 }

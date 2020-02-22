@@ -23,7 +23,7 @@ public interface AddContract {
     }
 
     interface presenter {
-        void requestAddMemo(MemoEntity memo);
+        boolean requestAddMemo(MemoEntity memo);
         void notifyAddSucceed(); 
     }
 }

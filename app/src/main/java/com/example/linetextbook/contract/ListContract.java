@@ -16,7 +16,7 @@ public interface ListContract {
     }
 
     interface presenter {
-        void requestMemoList();
+        boolean requestMemoList();
         void notifyItemReceived(List<MemoEntity> memoData);
     }
 }
