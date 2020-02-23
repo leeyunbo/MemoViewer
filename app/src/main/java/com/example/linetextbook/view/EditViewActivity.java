@@ -87,6 +87,7 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
         edit_content_edit.setText(testMemo.getContent());
         mArrayImageUrl = testMemo.getArrayImageUrl();
 
+
         if(mArrayImageUrl == null)  {
             mListImageUrl = new ArrayList<>();
             return;
@@ -262,7 +263,10 @@ public class EditViewActivity extends AppCompatActivity implements EditContract.
             case R.id.edit_finish_btn:
                 mMemo.setTitle(edit_title_edit.getText().toString());
                 mMemo.setContent(edit_content_edit.getText().toString());
-                mMemo.setArrayImageUrl(mListImageUrl.toArray(new String[0]));
+                if(mListImageUrl.size() == 0 || mListImageUrl == null) {
+                    mMemo.setArrayImageUrl(null);
+                }
+                else mMemo.setArrayImageUrl(mListImageUrl.toArray(new String[0]));
                 editMemo();
                 return true;
             default:

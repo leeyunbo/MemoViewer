@@ -90,7 +90,7 @@ public class MemoAdapter extends RecyclerView.Adapter<MemoAdapter.ViewHolder> {
         /**
          * 만약 해당 메모의 이미지가 존재하지 않는다면, 이미지 없음을 표시한다.
          */
-        if(mMemo.getStringImageUrl() == null) {
+        if(mMemo.getStringImageUrl() == null || mMemo.getArrayImageUrl() == null) {
             Glide.with(mContext).
                     load(R.drawable.ic_no_image).
                     into(holder.memo_list_imageView);
