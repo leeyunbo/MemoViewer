@@ -48,8 +48,8 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class AddViewActivity extends AppCompatActivity implements AddContract.view {
-    private AddPresenter mPresenter; //mPresenter
-    private List<String> mImageList = new ArrayList<>();
+    private AddPresenter mPresenter;
+    private List<String> mListImageUrl = new ArrayList<>();
     private Uri mPhotoUri;
     static final int REQUEST_IMAGE_ALBUM = 1;
     static final int REQUEST_IMAGE_CAPTURE = 2;
@@ -73,15 +73,21 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void addMemo() {
-        SimpleDateFormat format2 = new SimpleDateFormat( "yyyy년 MM월dd일 HH시mm분ss초");
-        Date date = new Date();
-        String title = titleEditText.getText().toString();
-        String content = contentEditText.getText().toString();
-        String time = format2.format(date);
-        MemoEntity memo;
-        if(mImageList.size() == 0) memo = new MemoEntity(title,content,time,null);
-        else memo = new MemoEntity(title,content,time, mImageList.toArray(new String[0]));
-        mPresenter.requestAddMemo(memo);
+        SimpleDateFormat mFormat;
+        Date mDate;
+        String mTitle;
+        String mContent;
+        String mTime;
+        MemoEntity mMemo;
+
+        mFormat = new SimpleDateFormat( "yyyy년 MM월dd일 HH시mm분ss초");
+        mDate = new Date();
+        mTitle = titleEditText.getText().toString();
+        mContent = contentEditText.getText().toString();
+        mTime = mFormat.format(mDate);
+        if(mListImageUrl.size() == 0) mMemo = new MemoEntity(mTitle,mContent,mTime,null);
+        else mMemo = new MemoEntity(mTitle,mContent,mTime, mListImageUrl.toArray(new String[0]));
+        mPresenter.requestAddMemo(mMemo);
     }
 
     /**
@@ -89,9 +95,11 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void backListView() {
-        Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        Intent mStartListViewIntent;
+
+        mStartListViewIntent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
+        mStartListViewIntent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(mStartListViewIntent);
     }
 
     /**
@@ -101,10 +109,12 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     @OnClick(R.id.add_album_image_btn)
     @Override
     public void addAlbumImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_PICK);
-        startActivityForResult(intent,REQUEST_IMAGE_ALBUM);
+        Intent mRequestImageAlbumIntent;
+
+        mRequestImageAlbumIntent = new Intent();
+        mRequestImageAlbumIntent.setType("image/*");
+        mRequestImageAlbumIntent.setAction(Intent.ACTION_PICK);
+        startActivityForResult(mRequestImageAlbumIntent,REQUEST_IMAGE_ALBUM);
     }
 
     /**
@@ -114,17 +124,20 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     @OnClick(R.id.add_camera_image_btn)
     @Override
     public void addCameraImage() {
-        CameraFunction cameraFunction = new CameraFunction(this);
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFIle = null;
-            photoFIle = cameraFunction.createImageFile();
-            if (photoFIle != null) {
+        CameraFunction mCameraFunction;
+        Intent mTakePictureIntent;
+        File mPhotoFile = null;
+
+        mCameraFunction = new CameraFunction(this);
+        mTakePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (mTakePictureIntent.resolveActivity(getPackageManager()) != null) {
+            mPhotoFile = mCameraFunction.createImageFile();
+            if (mPhotoFile != null) {
                 mPhotoUri =
-                        FileProvider.getUriForFile(this, "com.example.android.fileprovider", photoFIle);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                cameraFunction.galleryAddPic(mPhotoUri.toString());
+                        FileProvider.getUriForFile(this, "com.example.android.fileprovider", mPhotoFile);
+                mTakePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mPhotoUri);
+                startActivityForResult(mTakePictureIntent, REQUEST_IMAGE_CAPTURE);
+                mCameraFunction.galleryAddPic(mPhotoUri.toString());
             }
         }
     }
@@ -136,26 +149,30 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     @OnClick(R.id.add_url_image_btn)
     @Override
     public void addUrlImage() {
-        AlertDialog.Builder ad = new AlertDialog.Builder(this);
-        ad.setTitle("URL 입력");
-        ad.setMessage("http://www.url.com 형식으로 입력해주세요.");
+        AlertDialog.Builder mUrlInputAlertDialog;
+        final EditText mUrlEditText;
 
-        final EditText et = new EditText(this);
-        ad.setView(et);
+        mUrlInputAlertDialog = new AlertDialog.Builder(this);
+        mUrlEditText = new EditText(this);
 
-        ad.setPositiveButton("입력", new DialogInterface.OnClickListener() {
+        mUrlInputAlertDialog.setTitle("URL 입력");
+        mUrlInputAlertDialog.setMessage("http:// 혹은 https:// 를 꼭 붙여주세요.");
+        mUrlInputAlertDialog.setView(mUrlEditText);
+        mUrlInputAlertDialog.setPositiveButton("입력", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String Url = et.getText().toString();
-                if(!Url.contains("http://") && !Url.contains("https://")) {
+                String mImageUrl;
+
+                mImageUrl= mUrlEditText.getText().toString();
+                if(!mImageUrl.contains("http://") && !mImageUrl.contains("https://")) {
                     Toast.makeText(getApplicationContext(), "올바르지 않은 URL 입니다.",Toast.LENGTH_SHORT).show();
                     return;
                 }
-                changeImageRecyclerView(Url);
+                changeImageRecyclerView(mImageUrl);
             }
         });
 
-        ad.show();
+        mUrlInputAlertDialog.show();
     }
 
     /**
@@ -165,10 +182,12 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
      */
     @Override
     public void changeImageRecyclerView(String path) {
-        mImageList.add(path);
-        ImageAdapter adapter = new ImageAdapter(mImageList,this);
+        ImageAdapter mImageAdapter;
+
+        mListImageUrl.add(path);
+        mImageAdapter = new ImageAdapter(mListImageUrl,this);
         addRecyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
-        addRecyclerView.setAdapter(adapter);
+        addRecyclerView.setAdapter(mImageAdapter);
         addRecyclerView.setItemAnimator(new DefaultItemAnimator());
         addRecyclerView.setNestedScrollingEnabled(false);
     }
@@ -176,11 +195,11 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
     /**
      * RecyclerView에 대해 삭제 이벤트가 발생했을 경우, 실제 메모를 최신화 시키기 위해 호출되는 콜백 메서드
      *
-     * @param imageList 현재 메모가 가지고 있는 이미지의 경로를 담고 있는 리스트
+     * @param ListImageUrl 현재 메모가 가지고 있는 이미지의 경로를 담고 있는 리스트
      */
     @Override
-    public void notifyDeleteImage(List<String> imageList) {
-        this.mImageList = imageList;
+    public void notifyDeleteImage(List<String> ListImageUrl) {
+        this.mListImageUrl = ListImageUrl;
     }
 
     @Override
@@ -189,6 +208,12 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         return true;
     }
 
+
+    /**
+     * 메뉴바에 대한 선택 이벤트 발생시 호출되는 콜백 메서드
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -200,18 +225,25 @@ public class AddViewActivity extends AppCompatActivity implements AddContract.vi
         }
     }
 
+    /**
+     * ALBUM, CAMERA를 통해 가져온 이미지를 RecyclerView에 추가시킨다.
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String mPath;
+
         super.onActivityResult(requestCode,resultCode,data);
         if(requestCode == REQUEST_IMAGE_ALBUM) {
             if(data == null) return;
-            String path = data.getData().toString();
-            changeImageRecyclerView(path);
+            mPath = data.getData().toString();
+            changeImageRecyclerView(mPath);
         }
-        else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+        else if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             if(mPhotoUri == null) return;
             changeImageRecyclerView(mPhotoUri.toString());
-            mPhotoUri = null;
         }
     }
 

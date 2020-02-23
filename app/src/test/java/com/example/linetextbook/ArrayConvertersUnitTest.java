@@ -5,20 +5,26 @@ import org.junit.Before;
 import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 
+/**
+ * ArrayConverters Class의 메서드에 대한 테스트 코드
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 
 public class ArrayConvertersUnitTest {
-    String[] array;
-    String string;
+    private String[] mArray;
+    private String mString;
 
     /**
      * 테스트 데이터 생성
      */
     @Before
     public void createData() {
-        array = new String[100];
+        mArray = new String[100];
         for(int i=0; i<100; i++) {
             String si = String.valueOf(i);
-            array[i] = si;
+            mArray[i] = si;
         }
     }
 
@@ -30,9 +36,9 @@ public class ArrayConvertersUnitTest {
      */
     @Test
     public void testConvertFunction() {
-        string = ArrayConverters.convertArrayToString(array);
-        assertEquals(ArrayConverters.convertStringToArray(string).length,array.length);
-        assertEquals(ArrayConverters.convertArrayToList(array).size(), array.length);
+        mString = ArrayConverters.convertArrayToString(mArray);
+        assertEquals(ArrayConverters.convertStringToArray(mString).length, mArray.length);
+        assertEquals(ArrayConverters.convertArrayToList(mArray).size(), mArray.length);
     }
 
 }

@@ -29,15 +29,16 @@ public class CameraFunction {
      * @return 지정되어진 File 객체를 리턴한다.
      */
     public File createImageFile() {
-        File image = null;
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File mImage = null;
+        String mTimeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String mImageFileName = "JPEG_" + mTimeStamp + "_";
+        File mStorageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         try {
-            image = File.createTempFile(
-                    imageFileName,
+            mImage = File.createTempFile(
+                    mImageFileName,
                     ".jpg",
-                    storageDir
+                    mStorageDir
             ); }
         catch(FileNotFoundException e) {
             e.printStackTrace();
@@ -45,7 +46,7 @@ public class CameraFunction {
             e.printStackTrace();
         }
 
-        return image;
+        return mImage;
     }
 
     /**
@@ -56,6 +57,7 @@ public class CameraFunction {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(path);
         Uri contentUri = Uri.fromFile(f);
+
         mediaScanIntent.setData(contentUri);
         context.sendBroadcast(mediaScanIntent);
         return f;

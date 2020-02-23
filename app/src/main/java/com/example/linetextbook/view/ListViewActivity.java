@@ -14,12 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.linetextbook.IsUiTestCheck;
 import com.example.linetextbook.adapter.MemoAdapter;
 import com.example.linetextbook.contract.ListContract;
 import com.example.linetextbook.Presenter.ListPresenter;
 import com.example.linetextbook.R;
 import com.example.linetextbook.database.MemoEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -39,17 +41,19 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class ListViewActivity extends AppCompatActivity implements ListContract.view {
+
+    private boolean isRunningUiTest = IsUiTestCheck.isRunningUiTest; //Ui Test?
     private ListPresenter mPresenter;
-    private List<MemoEntity> mMemoData;
+    private List<MemoEntity> mListMemoDatas;
     private String[] mPermissions =
                     {Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.INTERNET,
                     Manifest.permission.READ_EXTERNAL_STORAGE};
 
-    @BindView(R.id.memoCount) TextView memoCount;
+    @BindView(R.id.list_memoCount) TextView list_memoCount;
     @BindView(R.id.list_add_Btn) ImageView list_add_btn;
-    @BindView(R.id.memoRecyclerView) RecyclerView memoRecyclerView;
+    @BindView(R.id.list_memoList) RecyclerView list_memoList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +68,9 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
                 requestPermissions(mPermissions, 0);
             }
         }
-        showMemoList();
+        if(isRunningUiTest) testShowMemoList();
+        else
+            showMemoList();
     }
 
     /**
@@ -73,10 +79,22 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
      */
     @OnClick(R.id.list_add_Btn)
     public void addBtnClick() {
-        Intent intent =
+        Intent mStartAddViewIntent;
+
+        mStartAddViewIntent =
                 new Intent(this, com.example.linetextbook.view.AddViewActivity.class);
-        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        mStartAddViewIntent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(mStartAddViewIntent);
+    }
+
+    /**
+     * <Ui Test용 메서드>
+     * 작성된 테스트 데이터 리스트를 RecyclerView에 뿌려준다.
+     */
+    public void testShowMemoList() {
+        List<MemoEntity> testMemoData = new ArrayList<>();
+        testMemoData.add(new MemoEntity("제목","내용","시간",null));
+        changeRecyclerView(testMemoData);
     }
 
     /**
@@ -95,13 +113,15 @@ public class ListViewActivity extends AppCompatActivity implements ListContract.
      */
     @Override
     public void changeRecyclerView(List<MemoEntity> memoData) {
-        this.mMemoData = memoData;
-        MemoAdapter adapter = new MemoAdapter(memoData,this);
-        memoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        memoRecyclerView.setAdapter(adapter);
-        memoRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        memoRecyclerView.setNestedScrollingEnabled(false);
-        memoCount.setText("현재 " + memoData.size() + "개의 메모");
+        MemoAdapter mMemoAdapter;
+
+        this.mListMemoDatas = memoData;
+        mMemoAdapter = new MemoAdapter(memoData,this);
+        list_memoList.setLayoutManager(new LinearLayoutManager(this));
+        list_memoList.setAdapter(mMemoAdapter);
+        list_memoList.setItemAnimator(new DefaultItemAnimator());
+        list_memoList.setNestedScrollingEnabled(false);
+        list_memoCount.setText("현재 " + memoData.size() + "개의 메모");
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.example.linetextbook.adapter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,16 +26,22 @@ import java.util.List;
  */
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
-    private List<String> mImageList;
+    private List<String> mListImageUrl;
     private AddViewActivity mContext;
+
+    public ImageAdapter(List<String> imageList, AddViewActivity context) {
+        this.mListImageUrl = imageList;
+        this.mContext = context;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView add_imageView;
-        ImageView delete_image_btn;
+        ImageView image_list_imageView;
+        ImageView image_list_delete_btn;
         ViewHolder(View view) {
             super(view);
-            add_imageView = view.findViewById(R.id.add_imageView);
-            delete_image_btn = view.findViewById(R.id.delete_image_btn);
-            delete_image_btn.setOnClickListener(new View.OnClickListener() {
+            image_list_imageView = view.findViewById(R.id.image_list_imageView);
+            image_list_delete_btn = view.findViewById(R.id.image_list_delete_btn);
+            image_list_delete_btn.setOnClickListener(new View.OnClickListener() {
                 /**
                  * 사용자가 메모 수정 화면에서 사진의 엑스 버튼을 클릭하면 호출되는 이벤트 콜백 메서드
                  * 해당 이미지가 삭제된다.
@@ -46,48 +51,42 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                 @Override
                 public void onClick(View v) {
                     int mPosition = getAdapterPosition();
-                    mImageList.remove(mPosition);
+                    mListImageUrl.remove(mPosition);
                     notifyItemRemoved(mPosition);
-                    notifyItemRangeChanged(mPosition, mImageList.size());
-                    mContext.notifyDeleteImage(mImageList);
+                    notifyItemRangeChanged(mPosition, mListImageUrl.size());
+                    mContext.notifyDeleteImage(mListImageUrl);
                 }
             });
         }
     }
 
-    public ImageAdapter(List<String> imageList, AddViewActivity context) {
-        this.mImageList = imageList;
-        this.mContext = context;
-    }
-
     @NonNull
     @Override
     public ImageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.image_list_layout, parent, false);
-        ImageAdapter.ViewHolder vh = new ImageAdapter.ViewHolder(view);
-        return vh;
+        LayoutInflater mInflater;
+        View mView;
+        ImageAdapter.ViewHolder mViewHolder;
+
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mView = mInflater.inflate(R.layout.image_list_layout, parent, false);
+        mViewHolder = new ImageAdapter.ViewHolder(mView);
+        return mViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageAdapter.ViewHolder holder, int position) {
-        String mUrl = mImageList.get(position);
-        if(mUrl.contains("http://") || mUrl.contains("https://")) {
-            Glide.with(mContext)
-                    .load(mUrl)
-                    .error(R.drawable.ic_broken_image)
-                    .into(holder.add_imageView);
-        }
-        else{
-            Glide.with(mContext)
-                    .load(Uri.parse(mUrl))
-                    .error(R.drawable.ic_broken_image)
-                    .into(holder.add_imageView);
-        }
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String mImageUrl;
+
+        mImageUrl = mListImageUrl.get(position);
+        Glide.with(mContext)
+                .load(mImageUrl)
+                .error(R.drawable.ic_broken_image)
+                .into(holder.image_list_imageView);
+
     }
 
     @Override
     public int getItemCount() {
-        return mImageList == null ? null : mImageList.size();
+        return mListImageUrl == null ? null : mListImageUrl.size();
     }
 }

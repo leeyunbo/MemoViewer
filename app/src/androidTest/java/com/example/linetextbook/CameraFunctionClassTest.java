@@ -8,24 +8,28 @@ import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+/**
+ * CameraFunction Class의 메서드에 대한 테스트 코드
+ *
+ * @author 이윤복
+ * @version 1.0
+ */
 
 @RunWith(AndroidJUnit4ClassRunner.class)
-public class CameraFunctionTest {
-    private CameraFunction cameraFunction;
-    private Context appContext;
+public class CameraFunctionClassTest {
+    private CameraFunction mCameraFunction;
+    private Context mContext;
 
     @Before
     public void init() {
-        appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        cameraFunction = new CameraFunction(appContext);
+        mContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+        mCameraFunction = new CameraFunction(mContext);
     }
 
     @Test
     public void testCreateImageFile() {
-        assertNotNull(cameraFunction.createImageFile());
+        assertNotNull(mCameraFunction.createImageFile());
     }
 }

@@ -1,4 +1,4 @@
-package com.example.linetextbook;
+package com.example.linetextbook.dbtest;
 import android.content.Context;
 
 import androidx.room.Room;
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
 /**
- * 내부 저장소에 Edit과 Delete 동작을 테스트하는 테스트 코드
+ * 내부 저장소에 Edit과 Delete 동작을 테스트하는 데이터베이스 테스트 코드
  *
  * @author 이윤복
  * @version 1.0
@@ -29,20 +29,31 @@ import static org.junit.Assert.assertSame;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class MemoEntityEditDeleteTest {
-    private MemoDAO memoDAO;
-    private MemoDatabase db;
+    private MemoDAO mMemoDao;
+    private MemoDatabase mDatabase;
+
+    /**
+     * DB를 컨트롤할 수 있는 객체를 생성한다.
+     */
     @Before
     public void createDb(){
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        db = Room.inMemoryDatabaseBuilder(appContext, MemoDatabase.class).build();
-        memoDAO = db.memoDAO();
+        mDatabase = Room.inMemoryDatabaseBuilder(appContext, MemoDatabase.class).build();
+        mMemoDao = mDatabase.memoDAO();
     }
 
+    /**
+     * DB 종료 메서드
+     */
     @After
     public void end() {
-        db.close();
+        mDatabase.close();
     }
 
+
+    /**
+     * DB에 대한 Edit과 Delete를 테스트하는 메서드
+     */
     @Test
     public void writeMemoAndReadInList(){
         int cnt;
@@ -64,19 +75,19 @@ public class MemoEntityEditDeleteTest {
         /**
          * DB INSERT
          */
-        memoDAO.doAddMemo(memo);
-        memoDAO.doAddMemo(memo2);
-        memoDAO.doAddMemo(memo3);
-        memoDAO.doAddMemo(memo4);
-        memoDAO.doAddMemo(memo5);
-        memoDAO.doAddMemo(memo6);
-        memoDAO.doAddMemo(memo7);
-        memoDAO.doAddMemo(memo8);
+        mMemoDao.doAddMemo(memo);
+        mMemoDao.doAddMemo(memo2);
+        mMemoDao.doAddMemo(memo3);
+        mMemoDao.doAddMemo(memo4);
+        mMemoDao.doAddMemo(memo5);
+        mMemoDao.doAddMemo(memo6);
+        mMemoDao.doAddMemo(memo7);
+        mMemoDao.doAddMemo(memo8);
 
         /**
          * DB INSERT 및 DB SELECT 결과 확인
          */
-        memoList = memoDAO.getMemoList();
+        memoList = mMemoDao.getMemoList();
         assertNotNull(memoList);
         assertEquals(memoList.size(),8);
 
@@ -84,30 +95,30 @@ public class MemoEntityEditDeleteTest {
          * DB EDIT 결과 확인, memo 3개 정보 변경
          */
         memoList.get(0).setTitle("Edit_title");
-        cnt = memoDAO.doEditMemo(memoList.get(0));
+        cnt = mMemoDao.doEditMemo(memoList.get(0));
         assertSame(cnt, 1);
 
         memoList.get(1).setTitle("Edit_title");
-        cnt = memoDAO.doEditMemo(memoList.get(1));
+        cnt = mMemoDao.doEditMemo(memoList.get(1));
         assertSame(cnt, 1);
 
         memoList.get(2).setTitle("Edit_title");
-        cnt = memoDAO.doEditMemo(memoList.get(2));
+        cnt = mMemoDao.doEditMemo(memoList.get(2));
         assertSame(cnt, 1);
 
 
         /**
          * DB Delete 결과 확인, 데이터 3개 제거
          */
-        memoList = memoDAO.getMemoList();
+        memoList = mMemoDao.getMemoList();
         assertNotNull(memoList);
         assertEquals(memoList.size(),8);
 
-        memoDAO.doDeleteMemo(memoList.get(0));
-        memoDAO.doDeleteMemo(memoList.get(1));
-        memoDAO.doDeleteMemo(memoList.get(2));
+        mMemoDao.doDeleteMemo(memoList.get(0));
+        mMemoDao.doDeleteMemo(memoList.get(1));
+        mMemoDao.doDeleteMemo(memoList.get(2));
 
-        memoList = memoDAO.getMemoList();
+        memoList = mMemoDao.getMemoList();
         assertNotNull(memoList);
         assertSame(memoList.size(), 8-3);
 

@@ -11,7 +11,7 @@ import com.example.linetextbook.converters.ArrayConverters;
 import java.util.List;
 
 /**
- * 스마트폰의 내부 저장소에 접근하여 요청을 처리하는 메서드들이 정의되어있는 Model
+ * 스마트폰의 내부 저장소에 접근하여 요청을 처리하는 메서드들이 정의되어있는 Model Class
  * Room 라이브러리 사용
  *
  * @author 이윤복
@@ -56,13 +56,14 @@ public class MemoModel{
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                List<MemoEntity> memoData = null;
-                memoData = mMemoDAO.getMemoList();
-                for(MemoEntity data : memoData) {
-                    if(data.getImageUrl() != null)
-                        data.setImageList(ArrayConverters.convertStringToArray(data.getImageUrl()));
+                List<MemoEntity> mMemoDatas = null;
+                mMemoDatas = mMemoDAO.getMemoList();
+                for(MemoEntity data : mMemoDatas) {
+                    if(data.getStringImageUrl() != null)
+                        data.setArrayImageUrl(ArrayConverters.convertStringToArray(data.getStringImageUrl()));
                 }
-                mListPresenter.notifyItemReceived(memoData);
+
+                mListPresenter.notifyItemReceived(mMemoDatas);
             }
         };
         Thread thread = new Thread(r);
@@ -72,19 +73,22 @@ public class MemoModel{
     /**
      * 메모를 수정하는 메서드
      *
+     * 1. ImageUrl 저장 방식
+     * 만약 List 형식 ImageUrl이 지정이 되어있다면, String으로 변환 시켜 stringImageUrl 필드에 저장 시키고
+     * 지정이 안되어있다면, null을 저장한다.
+     *
      * @param memo 수정된 메모의 정보를 담고있는 DO 객체
-     * @return
      */
     public void doEditMemo(MemoEntity memo) {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                String stringImageUrl;
-                if(memo.getImageList() != null) {
-                    stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
+                String mStringImageUrl;
+                if(memo.getArrayImageUrl() != null) {
+                    mStringImageUrl = ArrayConverters.convertArrayToString(memo.getArrayImageUrl());
                 }
-                else stringImageUrl = null;
-                memo.setImageUrl(stringImageUrl);
+                else mStringImageUrl = null;
+                memo.setStringImageUrl(mStringImageUrl);
                 mMemoDAO.doEditMemo(memo);
                 mEditPresenter.notifyItemEdit();
             }
@@ -96,17 +100,23 @@ public class MemoModel{
     /**
      * 메모를 추가하는 메서드
      *
+     * 1. ImageUrl 저장 방식
+     * 만약 List 형식 ImageUrl이 지정이 되어있다면, String으로 변환 시켜 stringImageUrl 필드에 저장 시키고
+     * 지정이 안되어있다면, null을 저장한다.
+     *
      * @param memo 추가할 메모의 정보를 담고있는 DO 객체
-     * @return
      */
     public void doAddMemo(MemoEntity memo) {
         Runnable r = new Runnable() {
             @Override
             public void run() {
-                if(memo.getImageList() != null) {
-                    String stringImageUrl = ArrayConverters.convertArrayToString(memo.getImageList());
-                    memo.setImageUrl(stringImageUrl);
+                String mStringImageUrl = null;
+                if(memo.getArrayImageUrl() != null) {
+                    mStringImageUrl = ArrayConverters.convertArrayToString(memo.getArrayImageUrl());
+                    memo.setStringImageUrl(mStringImageUrl);
                 }
+                else memo.setStringImageUrl(mStringImageUrl);
+
                 mMemoDAO.doAddMemo(memo);
                 mAddPresenter.notifyAddSucceed();
             }

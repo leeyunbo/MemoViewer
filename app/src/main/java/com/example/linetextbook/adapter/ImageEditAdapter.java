@@ -26,15 +26,21 @@ import java.util.List;
  */
 
 public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.ViewHolder> {
-    private List<String> mImageList;
+    private List<String> mListImageUrl;
     private EditViewActivity mContext;
+
+    public ImageEditAdapter(List<String> ListImageUrl, EditViewActivity context) {
+        this.mListImageUrl = ListImageUrl;
+        this.mContext = context;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView add_imageView;
+        ImageView image_list_imageView;
         ImageView delete_image_btn;
         ViewHolder(View view) {
             super(view);
-            add_imageView = view.findViewById(R.id.add_imageView);
-            delete_image_btn = view.findViewById(R.id.delete_image_btn);
+            image_list_imageView = view.findViewById(R.id.image_list_imageView);
+            delete_image_btn = view.findViewById(R.id.image_list_delete_btn);
             delete_image_btn.setOnClickListener(new View.OnClickListener() {
                 /**
                  * 사용자가 메모 수정 화면에서 사진의 엑스 버튼을 클릭하면 호출되는 이벤트 콜백 메서드
@@ -45,48 +51,41 @@ public class ImageEditAdapter extends RecyclerView.Adapter<ImageEditAdapter.View
                 @Override
                 public void onClick(View v) {
                     int mPosition = getAdapterPosition();
-                    mImageList.remove(mPosition);
+                    mListImageUrl.remove(mPosition);
                     notifyItemRemoved(mPosition);
-                    notifyItemRangeChanged(mPosition, mImageList.size());
-                    mContext.notifyDeleteImage(mImageList);
+                    notifyItemRangeChanged(mPosition, mListImageUrl.size());
+                    mContext.notifyDeleteImage(mListImageUrl);
                 }
             });
         }
     }
 
-    public ImageEditAdapter(List<String> imageList, EditViewActivity context) {
-        this.mImageList = imageList;
-        this.mContext = context;
-    }
-
     @NonNull
     @Override
     public ImageEditAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.image_list_layout, parent, false);
-        ImageEditAdapter.ViewHolder vh = new ImageEditAdapter.ViewHolder(view);
-        return vh;
+        LayoutInflater mInflater;
+        View mView;
+        ImageEditAdapter.ViewHolder mViewHolder;
+
+        mInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mView = mInflater.inflate(R.layout.image_list_layout, parent, false);
+        mViewHolder = new ImageEditAdapter.ViewHolder(mView);
+        return mViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ImageEditAdapter.ViewHolder holder, int position) {
-        String mUrl = mImageList.get(position);
-        if(mUrl.contains("http://") || mUrl.contains("https://")) {
-            Glide.with(mContext)
-                    .load(mUrl)
-                    .error(R.drawable.ic_broken_image)
-                    .into(holder.add_imageView);
-        }
-        else {
-            Glide.with(mContext)
-                    .load(mUrl)
-                    .error(R.drawable.ic_broken_image)
-                    .into(holder.add_imageView);
-        }
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        String mImageUrl;
+
+        mImageUrl = mListImageUrl.get(position);
+        Glide.with(mContext)
+                .load(mImageUrl)
+                .error(R.drawable.ic_broken_image)
+                .into(holder.image_list_imageView);
     }
 
     @Override
     public int getItemCount() {
-        return mImageList == null ? null : mImageList.size();
+        return mListImageUrl == null ? null : mListImageUrl.size();
     }
 }

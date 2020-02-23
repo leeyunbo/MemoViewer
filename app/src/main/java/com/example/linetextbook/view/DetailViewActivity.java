@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.linetextbook.IsUiTestCheck;
 import com.example.linetextbook.contract.DetailContract;
 import com.example.linetextbook.Presenter.DetailPresenter;
 import com.example.linetextbook.R;
@@ -34,6 +35,7 @@ import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
  */
 
 public class DetailViewActivity extends AppCompatActivity implements DetailContract.view {
+    private boolean isRunningUiTest = IsUiTestCheck.isRunningUiTest; // Ui Test?
     private DetailPresenter mPresenter;
     private MemoEntity mMemo;
     @BindView(R.id.detail_content_view)  TextView detail_content_view;
@@ -47,7 +49,8 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
         setContentView(R.layout.activity_detail_view);
         mPresenter = new DetailPresenter(this);
         ButterKnife.bind(this);
-        showMemoDetail();
+        if(isRunningUiTest == true) testShowMemoDetail();
+        else showMemoDetail();
     }
 
     /**
@@ -61,29 +64,74 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     }
 
     /**
-     * 사용자가 클릭한 메모의 정보를 출력해주는 메서드
-     * Intent를 통해 직렬화되어 넘어온 객체를 역직렬화를 통해 객체 형태로 변환 후 View에 뿌려준다.
+     * <Ui Test용 메서드>
+     * 작성된 테스트 데이터의 정보를 뷰에 뿌려준다.
      */
-    @Override
-    public void showMemoDetail() {
-        Intent intent = getIntent();
-        mMemo = (MemoEntity) intent.getSerializableExtra("MEMO");
-        String[] mImageList = mMemo.getImageList();
-        detail_title_view.setText(mMemo.getTitle());
-        detail_content_view.setText(mMemo.getContent());
-        detail_time_view.setText(mMemo.getTime());
+    public void testShowMemoDetail() {
+        MemoEntity testMemo = new MemoEntity("제목","내용","시간",null);
+        String[] mListImageUrl;
+        ImageView mImageView;
+
+        mListImageUrl = testMemo.getArrayImageUrl();
+        detail_title_view.setText(testMemo.getTitle());
+        detail_content_view.setText(testMemo.getContent());
+        detail_time_view.setText(testMemo.getTime());
         LinearLayout.LayoutParams layoutParams =
-                new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT,ActionBar.LayoutParams.WRAP_CONTENT);
+                new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
         layoutParams.setMargins(
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin),
                 (int) getResources().getDimension(R.dimen.imageview_margin)
         );
-        if(mImageList == null) return;
-        for(String image : mImageList) {
-            ImageView mImageView = new ImageView(this);
-            Glide.with(this).load(Uri.parse(image)).error(R.drawable.ic_broken_image).into(mImageView);
+
+        if(mListImageUrl == null) return;
+        for(String mImageUrl : mListImageUrl) {
+            mImageView = new ImageView(this);
+            Glide.with(this)
+                    .load(Uri.parse(mImageUrl))
+                    .error(R.drawable.ic_broken_image)
+                    .into(mImageView);
+            mImageView.setLayoutParams(layoutParams);
+            mImageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
+            mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            detail_image_container.addView(mImageView);
+        }
+    }
+
+    /**
+     * 사용자가 클릭한 메모의 정보를 출력해주는 메서드
+     * Intent를 통해 직렬화되어 넘어온 객체를 역직렬화를 통해 객체 형태로 변환 후 View에 뿌려준다.
+     */
+    @Override
+    public void showMemoDetail() {
+        Intent mFromListViewIntent;
+        String[] mListImageUrl;
+        ImageView mImageView;
+
+        mFromListViewIntent = getIntent();
+        mMemo = (MemoEntity) mFromListViewIntent.getSerializableExtra("MEMO");
+        if(mMemo == null) return;
+        mListImageUrl = mMemo.getArrayImageUrl();
+        detail_title_view.setText(mMemo.getTitle());
+        detail_content_view.setText(mMemo.getContent());
+        detail_time_view.setText(mMemo.getTime());
+        LinearLayout.LayoutParams layoutParams =
+                new LinearLayout.LayoutParams(ActionBar.LayoutParams.MATCH_PARENT, ActionBar.LayoutParams.WRAP_CONTENT);
+        layoutParams.setMargins(
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin),
+                (int) getResources().getDimension(R.dimen.imageview_margin)
+        );
+
+        if(mListImageUrl == null) return;
+        for(String mImageUrl : mListImageUrl) {
+            mImageView = new ImageView(this);
+            Glide.with(this)
+                    .load(Uri.parse(mImageUrl))
+                    .error(R.drawable.ic_broken_image)
+                    .into(mImageView);
             mImageView.setLayoutParams(layoutParams);
             mImageView.getLayoutParams().height = (int) getResources().getDimension(R.dimen.imageview_height);
             mImageView.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -97,9 +145,11 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
      */
     @Override
     public void backListView() {
-        Intent intent = new Intent(this, com.example.linetextbook.view.ListViewActivity.class);
-        intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        Intent mStartListViewIntent;
+
+        mStartListViewIntent = new Intent(this, ListViewActivity.class);
+        mStartListViewIntent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(mStartListViewIntent);
     }
 
     @Override
@@ -110,14 +160,14 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        Intent intent;
+        Intent mStartEditViewIntent;
+
         switch (item.getItemId()) {
             case R.id.menu_edit_btn:
-                intent = new Intent(this,com.example.linetextbook.view.EditViewActivity.class);
-                intent.putExtra("MEMO", mMemo);
-                intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                mStartEditViewIntent = new Intent(this,com.example.linetextbook.view.EditViewActivity.class);
+                mStartEditViewIntent.putExtra("MEMO", mMemo);
+                mStartEditViewIntent.addFlags(FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(mStartEditViewIntent);
                 return true;
             case R.id.menu_delete_btn:
                 deleteMemo();

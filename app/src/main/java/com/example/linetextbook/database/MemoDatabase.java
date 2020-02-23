@@ -19,6 +19,12 @@ public abstract class MemoDatabase extends RoomDatabase {
     private static MemoDatabase sINSTANCE;
     private static final Object sLock = new Object();
 
+    /**
+     * 데이터베이스를 컨트롤 할 수 있는 객체를 가져올 수 있는 싱글턴 패턴 메서드
+     *
+     * @param context Application Context 객체
+     * @return 데이터베이스 객체
+     */
     public static MemoDatabase getInstance(Context context) {
         synchronized (sLock) {
             if (sINSTANCE == null) {

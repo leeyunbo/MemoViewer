@@ -1,4 +1,4 @@
-package com.example.linetextbook;
+package com.example.linetextbook.dbtest;
 
 import android.content.Context;
 
@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * 내부 저장소에 Read와 Write 동작을 테스트하는 테스트 코드
+ * 내부 저장소에 Read와 Write 동작을 테스트하는 데이터베이스 테스트 코드
  *
  * @author 이윤복
  * @version 1.0
@@ -29,21 +29,30 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4ClassRunner.class)
 public class MemoEntityReadWriteTest {
-    private MemoDAO memoDAO;
-    private MemoDatabase db;
+    private MemoDAO mMemoDao;
+    private MemoDatabase mDatabase;
 
+    /**
+     * DB를 컨트롤할 수 있는 객체를 생성한다.
+     */
     @Before
     public void createDb(){
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        db = Room.inMemoryDatabaseBuilder(appContext, MemoDatabase.class).build();
-        memoDAO = db.memoDAO();
+        mDatabase = Room.inMemoryDatabaseBuilder(appContext, MemoDatabase.class).build();
+        mMemoDao = mDatabase.memoDAO();
     }
 
+    /**
+     * DB 종료 메서드
+     */
     @After
     public void end() {
-        db.close();
+        mDatabase.close();
     }
 
+    /**
+     * DB에 대한 Read와 Write를 테스트하는 메서드
+     */
     @Test
     public void writeMemoAndReadInList(){
         List<MemoEntity> memoList;
@@ -64,19 +73,19 @@ public class MemoEntityReadWriteTest {
         /**
          * DB INSERT
          */
-        memoDAO.doAddMemo(memo);
-        memoDAO.doAddMemo(memo2);
-        memoDAO.doAddMemo(memo3);
-        memoDAO.doAddMemo(memo4);
-        memoDAO.doAddMemo(memo5);
-        memoDAO.doAddMemo(memo6);
-        memoDAO.doAddMemo(memo7);
-        memoDAO.doAddMemo(memo8);
+        mMemoDao.doAddMemo(memo);
+        mMemoDao.doAddMemo(memo2);
+        mMemoDao.doAddMemo(memo3);
+        mMemoDao.doAddMemo(memo4);
+        mMemoDao.doAddMemo(memo5);
+        mMemoDao.doAddMemo(memo6);
+        mMemoDao.doAddMemo(memo7);
+        mMemoDao.doAddMemo(memo8);
 
         /**
          * DB INSERT 및 DB SELECT 결과 확인
          */
-        memoList = memoDAO.getMemoList();
+        memoList = mMemoDao.getMemoList();
         assertNotNull(memoList);
         assertEquals(memoList.size(),8);
 
