@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -17,7 +19,10 @@ import com.example.linetextbook.IsUiTestCheck;
 import com.example.linetextbook.contract.DetailContract;
 import com.example.linetextbook.Presenter.DetailPresenter;
 import com.example.linetextbook.R;
+import com.example.linetextbook.converters.ArrayConverters;
 import com.example.linetextbook.database.MemoEntity;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -106,13 +111,13 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
     @Override
     public void showMemoDetail() {
         Intent mFromListViewIntent;
-        String[] mListImageUrl;
+        String[] mArrayImageUrl;
         ImageView mImageView;
 
         mFromListViewIntent = getIntent();
         mMemo = (MemoEntity) mFromListViewIntent.getSerializableExtra("MEMO");
         if(mMemo == null) return;
-        mListImageUrl = mMemo.getArrayImageUrl();
+        mArrayImageUrl = mMemo.getArrayImageUrl();
         detail_title_view.setText(mMemo.getTitle());
         detail_content_view.setText(mMemo.getContent());
         detail_time_view.setText(mMemo.getTime());
@@ -125,8 +130,8 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
                 (int) getResources().getDimension(R.dimen.imageview_margin)
         );
 
-        if(mListImageUrl == null) return;
-        for(String mImageUrl : mListImageUrl) {
+        if(mArrayImageUrl == null) return;
+        for(String mImageUrl : mArrayImageUrl) {
             mImageView = new ImageView(this);
             Glide.with(this)
                     .load(Uri.parse(mImageUrl))
@@ -138,6 +143,8 @@ public class DetailViewActivity extends AppCompatActivity implements DetailContr
             detail_image_container.addView(mImageView);
         }
     }
+
+
 
     /**
      * presenter에게 한 요청이 완료되면 presenter에 의해 호출되는 콜백 메서드

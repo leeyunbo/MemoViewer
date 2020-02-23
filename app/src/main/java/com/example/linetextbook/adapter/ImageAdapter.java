@@ -82,7 +82,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder>{
                 .load(mImageUrl)
                 .error(R.drawable.ic_broken_image)
                 .into(holder.image_list_imageView);
-
     }
 
     @Override
