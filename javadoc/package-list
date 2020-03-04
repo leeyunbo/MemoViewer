@@ -1,0 +1,9 @@
+com.example.linetextbook
+com.example.linetextbook.Presenter
+com.example.linetextbook.adapter
+com.example.linetextbook.contract
+com.example.linetextbook.converters
+com.example.linetextbook.database
+com.example.linetextbook.dbtest
+com.example.linetextbook.uitest
+com.example.linetextbook.view
