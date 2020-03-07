@@ -17,5 +17,11 @@
   <li> UI 테스트 라이브러리 Espresso 사용 </li>
   <li> 유닛 테스트 라이브러리 JUnit 사용 </li>
 </ul> 
+<hr>
+<h3> 3. 기타 정보 </h3> 
+<ul>
+  <li> MVP 패턴 활용 </li> 
+  <li> Java 언어 사용 </li>
+</
 
 
