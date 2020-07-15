@@ -23,7 +23,7 @@
   <li> MVP 패턴 활용 </li> 
   <li> Java 언어 사용 </li>
 </ul>
-
+<hr>
 <h3> 4. 어플리케이션 화면 </h3>
 
 ![MemoViewer](https://user-images.githubusercontent.com/44944031/87563603-64979200-c6fa-11ea-9dfb-cbf3ed0586cc.png)
